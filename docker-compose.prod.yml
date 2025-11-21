@@ -1,0 +1,201 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: fadearena-db-prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-fadearena}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fadearena-network
+    restart: always
+    # Security: don't expose port in production
+    # ports:
+    #   - "5432:5432"
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: fadearena-api-prod
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fadearena}
+      PORT: 3001
+      HOST: 0.0.0.0
+      # Hyperliquid
+      HYPERLIQUID_API_URL_INFO: ${HYPERLIQUID_API_URL_INFO}
+      HYPERLIQUID_API_URL_EXCHANGE: ${HYPERLIQUID_API_URL_EXCHANGE}
+      HYPERLIQUID_WALLET_ADDRESS: ${HYPERLIQUID_WALLET_ADDRESS}
+      HYPERLIQUID_WALLET_PRIVATE_KEY: ${HYPERLIQUID_WALLET_PRIVATE_KEY}
+      # AI Bot wallets (the wallets we're mirroring)
+      BOT_GEMINI_3_PRO: ${BOT_GEMINI_3_PRO}
+      BOT_GROK_4: ${BOT_GROK_4}
+      BOT_QWEN3_MAX: ${BOT_QWEN3_MAX}
+      BOT_KIMI_K2_THINKING: ${BOT_KIMI_K2_THINKING}
+      BOT_DEEPSEEK_CHAT_V3_1: ${BOT_DEEPSEEK_CHAT_V3_1}
+      BOT_CLAUDE_SONNET_4_5: ${BOT_CLAUDE_SONNET_4_5}
+      # Legacy support (for backward compatibility)
+      GEMINI_3_PRO_WALLET: ${GEMINI_3_PRO_WALLET}
+      GROK_4_WALLET: ${GROK_4_WALLET}
+      QWEN3_MAX_WALLET: ${QWEN3_MAX_WALLET}
+      KIMI_K2_THINKING_WALLET: ${KIMI_K2_THINKING_WALLET}
+      DEEPSEEK_CHAT_V3_1_WALLET: ${DEEPSEEK_CHAT_V3_1_WALLET}
+      CLAUDE_SONNET_WALLET: ${CLAUDE_SONNET_WALLET}
+      # Mirror trading wallets (our wallets that mirror each bot)
+      MY_GEMINI_FADE_WALLET: ${MY_GEMINI_FADE_WALLET}
+      MY_GROK_FADE_WALLET: ${MY_GROK_FADE_WALLET}
+      MY_QWEN_FADE_WALLET: ${MY_QWEN_FADE_WALLET}
+      MY_KIMI_FADE_WALLET: ${MY_KIMI_FADE_WALLET}
+      MY_DEEPSEEK_FADE_WALLET: ${MY_DEEPSEEK_FADE_WALLET}
+      MY_CLAUDE_FADE_WALLET: ${MY_CLAUDE_FADE_WALLET}
+      # Mirror trading wallet private keys (for signing orders)
+      MY_GEMINI_FADE_PRIVATE_KEY: ${MY_GEMINI_FADE_PRIVATE_KEY}
+      MY_GROK_FADE_PRIVATE_KEY: ${MY_GROK_FADE_PRIVATE_KEY}
+      MY_QWEN_FADE_PRIVATE_KEY: ${MY_QWEN_FADE_PRIVATE_KEY}
+      MY_KIMI_FADE_PRIVATE_KEY: ${MY_KIMI_FADE_PRIVATE_KEY}
+      MY_DEEPSEEK_FADE_PRIVATE_KEY: ${MY_DEEPSEEK_FADE_PRIVATE_KEY}
+      MY_CLAUDE_FADE_PRIVATE_KEY: ${MY_CLAUDE_FADE_PRIVATE_KEY}
+      # Risk limits
+      DEFAULT_LEVERAGE_MULTIPLIER: ${DEFAULT_LEVERAGE_MULTIPLIER:-1.0}
+      DEFAULT_GLOBAL_EXPOSURE_CAP: ${DEFAULT_GLOBAL_EXPOSURE_CAP:-}
+      DEFAULT_DAILY_LOSS_LIMIT: ${DEFAULT_DAILY_LOSS_LIMIT:-}
+      # Polling
+      BOT_STATE_INTERVAL_MS: ${BOT_STATE_INTERVAL_MS:-5000}
+      RECONCILIATION_INTERVAL_MS: ${RECONCILIATION_INTERVAL_MS:-60000}
+      # Worker heartbeat
+      WORKER_HEARTBEAT_INTERVAL_MS: ${WORKER_HEARTBEAT_INTERVAL_MS:-30000}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo 'Running database migrations...' &&
+        cd /app/packages/shared &&
+        npx prisma migrate deploy &&
+        echo 'Starting API server...' &&
+        cd /app/packages/api &&
+        node dist/index.js
+      "
+    networks:
+      - fadearena-network
+    restart: always
+    # Expose only to reverse proxy
+    expose:
+      - "3001"
+
+  worker:
+    build:
+      context: .
+      dockerfile: packages/worker/Dockerfile
+    container_name: fadearena-worker-prod
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fadearena}
+      # Hyperliquid
+      HYPERLIQUID_API_URL_INFO: ${HYPERLIQUID_API_URL_INFO}
+      HYPERLIQUID_API_URL_EXCHANGE: ${HYPERLIQUID_API_URL_EXCHANGE}
+      HYPERLIQUID_WALLET_ADDRESS: ${HYPERLIQUID_WALLET_ADDRESS}
+      HYPERLIQUID_WALLET_PRIVATE_KEY: ${HYPERLIQUID_WALLET_PRIVATE_KEY}
+      # AI Bot wallets (the wallets we're mirroring)
+      BOT_GEMINI_3_PRO: ${BOT_GEMINI_3_PRO}
+      BOT_GROK_4: ${BOT_GROK_4}
+      BOT_QWEN3_MAX: ${BOT_QWEN3_MAX}
+      BOT_KIMI_K2_THINKING: ${BOT_KIMI_K2_THINKING}
+      BOT_DEEPSEEK_CHAT_V3_1: ${BOT_DEEPSEEK_CHAT_V3_1}
+      BOT_CLAUDE_SONNET_4_5: ${BOT_CLAUDE_SONNET_4_5}
+      # Legacy support (for backward compatibility)
+      GEMINI_3_PRO_WALLET: ${GEMINI_3_PRO_WALLET}
+      GROK_4_WALLET: ${GROK_4_WALLET}
+      QWEN3_MAX_WALLET: ${QWEN3_MAX_WALLET}
+      KIMI_K2_THINKING_WALLET: ${KIMI_K2_THINKING_WALLET}
+      DEEPSEEK_CHAT_V3_1_WALLET: ${DEEPSEEK_CHAT_V3_1_WALLET}
+      CLAUDE_SONNET_WALLET: ${CLAUDE_SONNET_WALLET}
+      # Mirror trading wallets (our wallets that mirror each bot)
+      MY_GEMINI_FADE_WALLET: ${MY_GEMINI_FADE_WALLET}
+      MY_GROK_FADE_WALLET: ${MY_GROK_FADE_WALLET}
+      MY_QWEN_FADE_WALLET: ${MY_QWEN_FADE_WALLET}
+      MY_KIMI_FADE_WALLET: ${MY_KIMI_FADE_WALLET}
+      MY_DEEPSEEK_FADE_WALLET: ${MY_DEEPSEEK_FADE_WALLET}
+      MY_CLAUDE_FADE_WALLET: ${MY_CLAUDE_FADE_WALLET}
+      # Mirror trading wallet private keys (for signing orders)
+      MY_GEMINI_FADE_PRIVATE_KEY: ${MY_GEMINI_FADE_PRIVATE_KEY}
+      MY_GROK_FADE_PRIVATE_KEY: ${MY_GROK_FADE_PRIVATE_KEY}
+      MY_QWEN_FADE_PRIVATE_KEY: ${MY_QWEN_FADE_PRIVATE_KEY}
+      MY_KIMI_FADE_PRIVATE_KEY: ${MY_KIMI_FADE_PRIVATE_KEY}
+      MY_DEEPSEEK_FADE_PRIVATE_KEY: ${MY_DEEPSEEK_FADE_PRIVATE_KEY}
+      MY_CLAUDE_FADE_PRIVATE_KEY: ${MY_CLAUDE_FADE_PRIVATE_KEY}
+      # Risk limits
+      DEFAULT_LEVERAGE_MULTIPLIER: ${DEFAULT_LEVERAGE_MULTIPLIER:-1.0}
+      DEFAULT_GLOBAL_EXPOSURE_CAP: ${DEFAULT_GLOBAL_EXPOSURE_CAP:-}
+      DEFAULT_DAILY_LOSS_LIMIT: ${DEFAULT_DAILY_LOSS_LIMIT:-}
+      # Polling
+      BOT_STATE_INTERVAL_MS: ${BOT_STATE_INTERVAL_MS:-5000}
+      RECONCILIATION_INTERVAL_MS: ${RECONCILIATION_INTERVAL_MS:-60000}
+      # Worker heartbeat
+      WORKER_HEARTBEAT_INTERVAL_MS: ${WORKER_HEARTBEAT_INTERVAL_MS:-30000}
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    networks:
+      - fadearena-network
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: fadearena-frontend-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api:3001}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://api:3002}
+    depends_on:
+      - api
+    networks:
+      - fadearena-network
+    restart: always
+    # Expose only to reverse proxy
+    expose:
+      - "3000"
+
+  # TODO: Reverse proxy service (Caddy or Nginx)
+  # Uncomment and configure when ready to expose to internet
+  #
+  # reverse-proxy:
+  #   image: caddy:2-alpine
+  #   container_name: fadearena-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #     - caddy_data:/data
+  #     - caddy_config:/config
+  #   depends_on:
+  #     - api
+  #     - frontend
+  #   networks:
+  #     - fadearena-network
+  #   restart: always
+
+volumes:
+  postgres_data_prod:
+  # caddy_data:
+  # caddy_config:
+
+networks:
+  fadearena-network:
+    driver: bridge
+

@@ -1,0 +1,183 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: fadearena-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fadearena}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fadearena}
+      POSTGRES_DB: ${POSTGRES_DB:-fadearena}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fadearena}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fadearena-network
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: fadearena-api
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${POSTGRES_USER:-fadearena}:${POSTGRES_PASSWORD:-fadearena}@db:5432/${POSTGRES_DB:-fadearena}
+      PORT: 3001
+      HOST: 0.0.0.0
+      # Hyperliquid
+      HYPERLIQUID_API_URL_INFO: ${HYPERLIQUID_API_URL_INFO:-https://api.hyperliquid.xyz/info}
+      HYPERLIQUID_API_URL_EXCHANGE: ${HYPERLIQUID_API_URL_EXCHANGE:-https://api.hyperliquid.xyz/exchange}
+      HYPERLIQUID_WALLET_ADDRESS: ${HYPERLIQUID_WALLET_ADDRESS}
+      HYPERLIQUID_WALLET_PRIVATE_KEY: ${HYPERLIQUID_WALLET_PRIVATE_KEY}
+      # AI Bot wallets (the wallets we're mirroring)
+      BOT_GEMINI_3_PRO: ${BOT_GEMINI_3_PRO}
+      BOT_GROK_4: ${BOT_GROK_4}
+      BOT_QWEN3_MAX: ${BOT_QWEN3_MAX}
+      BOT_KIMI_K2_THINKING: ${BOT_KIMI_K2_THINKING}
+      BOT_DEEPSEEK_CHAT_V3_1: ${BOT_DEEPSEEK_CHAT_V3_1}
+      BOT_CLAUDE_SONNET_4_5: ${BOT_CLAUDE_SONNET_4_5}
+      # Legacy support (for backward compatibility)
+      GEMINI_3_PRO_WALLET: ${GEMINI_3_PRO_WALLET}
+      GROK_4_WALLET: ${GROK_4_WALLET}
+      QWEN3_MAX_WALLET: ${QWEN3_MAX_WALLET}
+      KIMI_K2_THINKING_WALLET: ${KIMI_K2_THINKING_WALLET}
+      DEEPSEEK_CHAT_V3_1_WALLET: ${DEEPSEEK_CHAT_V3_1_WALLET}
+      CLAUDE_SONNET_WALLET: ${CLAUDE_SONNET_WALLET}
+      # Mirror trading wallets (our wallets that mirror each bot)
+      MY_GEMINI_FADE_WALLET: ${MY_GEMINI_FADE_WALLET}
+      MY_GROK_FADE_WALLET: ${MY_GROK_FADE_WALLET}
+      MY_QWEN_FADE_WALLET: ${MY_QWEN_FADE_WALLET}
+      MY_KIMI_FADE_WALLET: ${MY_KIMI_FADE_WALLET}
+      MY_DEEPSEEK_FADE_WALLET: ${MY_DEEPSEEK_FADE_WALLET}
+      MY_CLAUDE_FADE_WALLET: ${MY_CLAUDE_FADE_WALLET}
+      # Mirror trading wallet private keys (for signing orders)
+      MY_GEMINI_FADE_PRIVATE_KEY: ${MY_GEMINI_FADE_PRIVATE_KEY}
+      MY_GROK_FADE_PRIVATE_KEY: ${MY_GROK_FADE_PRIVATE_KEY}
+      MY_QWEN_FADE_PRIVATE_KEY: ${MY_QWEN_FADE_PRIVATE_KEY}
+      MY_KIMI_FADE_PRIVATE_KEY: ${MY_KIMI_FADE_PRIVATE_KEY}
+      MY_DEEPSEEK_FADE_PRIVATE_KEY: ${MY_DEEPSEEK_FADE_PRIVATE_KEY}
+      MY_CLAUDE_FADE_PRIVATE_KEY: ${MY_CLAUDE_FADE_PRIVATE_KEY}
+      # Risk limits
+      DEFAULT_LEVERAGE_MULTIPLIER: ${DEFAULT_LEVERAGE_MULTIPLIER:-1.0}
+      DEFAULT_GLOBAL_EXPOSURE_CAP: ${DEFAULT_GLOBAL_EXPOSURE_CAP:-}
+      DEFAULT_DAILY_LOSS_LIMIT: ${DEFAULT_DAILY_LOSS_LIMIT:-}
+      # Polling
+      BOT_STATE_INTERVAL_MS: ${BOT_STATE_INTERVAL_MS:-5000}
+      RECONCILIATION_INTERVAL_MS: ${RECONCILIATION_INTERVAL_MS:-60000}
+    ports:
+      - "${API_PORT:-3001}:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./packages:/app/packages
+      - ./packages/shared/prisma:/app/packages/shared/prisma
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 5 &&
+        cd /app/packages/shared &&
+        npx prisma migrate deploy &&
+        cd /app/packages/api &&
+        pnpm dev
+      "
+    networks:
+      - fadearena-network
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: packages/worker/Dockerfile
+    container_name: fadearena-worker
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${POSTGRES_USER:-fadearena}:${POSTGRES_PASSWORD:-fadearena}@db:5432/${POSTGRES_DB:-fadearena}
+      # Hyperliquid
+      HYPERLIQUID_API_URL_INFO: ${HYPERLIQUID_API_URL_INFO:-https://api.hyperliquid.xyz/info}
+      HYPERLIQUID_API_URL_EXCHANGE: ${HYPERLIQUID_API_URL_EXCHANGE:-https://api.hyperliquid.xyz/exchange}
+      HYPERLIQUID_WALLET_ADDRESS: ${HYPERLIQUID_WALLET_ADDRESS}
+      HYPERLIQUID_WALLET_PRIVATE_KEY: ${HYPERLIQUID_WALLET_PRIVATE_KEY}
+      # AI Bot wallets (the wallets we're mirroring)
+      BOT_GEMINI_3_PRO: ${BOT_GEMINI_3_PRO}
+      BOT_GROK_4: ${BOT_GROK_4}
+      BOT_QWEN3_MAX: ${BOT_QWEN3_MAX}
+      BOT_KIMI_K2_THINKING: ${BOT_KIMI_K2_THINKING}
+      BOT_DEEPSEEK_CHAT_V3_1: ${BOT_DEEPSEEK_CHAT_V3_1}
+      BOT_CLAUDE_SONNET_4_5: ${BOT_CLAUDE_SONNET_4_5}
+      # Legacy support (for backward compatibility)
+      GEMINI_3_PRO_WALLET: ${GEMINI_3_PRO_WALLET}
+      GROK_4_WALLET: ${GROK_4_WALLET}
+      QWEN3_MAX_WALLET: ${QWEN3_MAX_WALLET}
+      KIMI_K2_THINKING_WALLET: ${KIMI_K2_THINKING_WALLET}
+      DEEPSEEK_CHAT_V3_1_WALLET: ${DEEPSEEK_CHAT_V3_1_WALLET}
+      CLAUDE_SONNET_WALLET: ${CLAUDE_SONNET_WALLET}
+      # Mirror trading wallets (our wallets that mirror each bot)
+      MY_GEMINI_FADE_WALLET: ${MY_GEMINI_FADE_WALLET}
+      MY_GROK_FADE_WALLET: ${MY_GROK_FADE_WALLET}
+      MY_QWEN_FADE_WALLET: ${MY_QWEN_FADE_WALLET}
+      MY_KIMI_FADE_WALLET: ${MY_KIMI_FADE_WALLET}
+      MY_DEEPSEEK_FADE_WALLET: ${MY_DEEPSEEK_FADE_WALLET}
+      MY_CLAUDE_FADE_WALLET: ${MY_CLAUDE_FADE_WALLET}
+      # Mirror trading wallet private keys (for signing orders)
+      MY_GEMINI_FADE_PRIVATE_KEY: ${MY_GEMINI_FADE_PRIVATE_KEY}
+      MY_GROK_FADE_PRIVATE_KEY: ${MY_GROK_FADE_PRIVATE_KEY}
+      MY_QWEN_FADE_PRIVATE_KEY: ${MY_QWEN_FADE_PRIVATE_KEY}
+      MY_KIMI_FADE_PRIVATE_KEY: ${MY_KIMI_FADE_PRIVATE_KEY}
+      MY_DEEPSEEK_FADE_PRIVATE_KEY: ${MY_DEEPSEEK_FADE_PRIVATE_KEY}
+      MY_CLAUDE_FADE_PRIVATE_KEY: ${MY_CLAUDE_FADE_PRIVATE_KEY}
+      # Risk limits
+      DEFAULT_LEVERAGE_MULTIPLIER: ${DEFAULT_LEVERAGE_MULTIPLIER:-1.0}
+      DEFAULT_GLOBAL_EXPOSURE_CAP: ${DEFAULT_GLOBAL_EXPOSURE_CAP:-}
+      DEFAULT_DAILY_LOSS_LIMIT: ${DEFAULT_DAILY_LOSS_LIMIT:-}
+      # Polling
+      BOT_STATE_INTERVAL_MS: ${BOT_STATE_INTERVAL_MS:-5000}
+      RECONCILIATION_INTERVAL_MS: ${RECONCILIATION_INTERVAL_MS:-60000}
+      # Worker heartbeat
+      WORKER_HEARTBEAT_INTERVAL_MS: ${WORKER_HEARTBEAT_INTERVAL_MS:-30000}
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    volumes:
+      - ./packages:/app/packages
+    command: pnpm dev
+    networks:
+      - fadearena-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: fadearena-frontend
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://localhost:3002}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - api
+    volumes:
+      - ./apps/web:/app/apps/web
+      - /app/apps/web/.next
+    command: pnpm dev
+    networks:
+      - fadearena-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  fadearena-network:
+    driver: bridge
+

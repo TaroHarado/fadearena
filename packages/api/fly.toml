@@ -1,0 +1,44 @@
+# fly.toml app configuration file generated for fadearena-api on 2025-11-20T18:46:30+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'fadearena-api'
+primary_region = 'fra'
+
+[build]
+  # Dockerfile находится в packages/api, но build context - корень репозитория
+  # Это позволяет Dockerfile видеть всю структуру монорепозитория
+  # ВАЖНО: Запускайте flyctl deploy из корня репозитория для правильного build context
+  dockerfile = 'Dockerfile'
+  ignorefile = '.dockerignore'
+
+[env]
+  HOST = '0.0.0.0'
+  NODE_ENV = 'production'
+  PORT = '3001'
+
+[processes]
+  app = 'node dist/index.js'
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '10s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/api/health'
+    protocol = 'http'
+    tls_skip_verify = false
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1

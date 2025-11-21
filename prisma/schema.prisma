@@ -1,0 +1,214 @@
+// FadeArena Database Schema
+// Prisma ORM schema for PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Core Trading Tables
+// ============================================================================
+
+/// Normalized bot trade events (fills and position changes)
+/// Populated by bot-ingestor from Hyperliquid API responses
+model BotTradeEvent {
+  id                String   @id @default(uuid())
+  botId             String   // e.g., "gemini-3-pro"
+  walletAddress     String   // 0x... address
+  timestamp         DateTime @db.Timestamptz(6)
+  eventType         String   // "fill" | "position-change"
+  
+  // Trade details
+  asset             String   // e.g., "BTC"
+  side              String   // "long" | "short"
+  size              Decimal  @db.Decimal(20, 8) // Absolute size (always positive)
+  price             Decimal  @db.Decimal(20, 8)
+  notional          Decimal  @db.Decimal(20, 2) // USD value
+  
+  // Position context (for position changes)
+  previousSize      Decimal? @db.Decimal(20, 8) // Can be negative for short
+  previousNotional  Decimal? @db.Decimal(20, 2)
+  currentSize       Decimal? @db.Decimal(20, 8)
+  currentNotional   Decimal? @db.Decimal(20, 2)
+  
+  // Metadata
+  hyperliquidFillHash String? // For fills, the original hash
+  rawData            Json?    // Original Hyperliquid response (for debugging)
+  
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  strategyDecisions StrategyDecision[]
+  myTrades          MyTrade[]
+  
+  @@index([botId, timestamp])
+  @@index([timestamp])
+  @@index([asset])
+}
+
+/// Strategy decisions made by strategy-engine
+/// Links BotTradeEvent to OrderRequest/OrderResult
+model StrategyDecision {
+  id                String   @id @default(uuid())
+  botTradeEventId   String
+  timestamp         DateTime @db.Timestamptz(6)
+  decision          String   // "execute" | "skip"
+  
+  // Decision details
+  reason            String?  // Why executing
+  skipReason        String?  // Why skipping
+  
+  // Risk checks (stored for audit)
+  riskChecks        Json     // { botEnabled, killSwitchActive, ... }
+  settingsSnapshot  Json     // Settings at time of decision
+  
+  // Relations
+  botTradeEvent     BotTradeEvent @relation(fields: [botTradeEventId], references: [id])
+  myTrades          MyTrade[]
+  
+  @@index([botTradeEventId])
+  @@index([timestamp])
+  @@index([decision])
+}
+
+/// Our executed trades (inverse positions)
+/// Populated by trading-client after order execution
+model MyTrade {
+  id                String   @id @default(uuid())
+  botTradeEventId   String?
+  strategyDecisionId String?
+  timestamp         DateTime @db.Timestamptz(6)
+  
+  // Trade details
+  botId             String   // Which bot triggered this
+  asset             String
+  side              String   // "long" | "short"
+  size              Decimal  @db.Decimal(20, 8)
+  price             Decimal  @db.Decimal(20, 8)
+  notional          Decimal  @db.Decimal(20, 2)
+  
+  // Execution details
+  orderRequest      Json     // Full OrderRequest object
+  orderResult       Json?    // Full OrderResult object
+  hyperliquidOrderId Int?    // From Hyperliquid response
+  cloid             String   // Client order ID (idempotent)
+  
+  // PnL (calculated later)
+  pnl               Decimal? @db.Decimal(20, 2)
+  closedAt          DateTime? @db.Timestamptz(6)
+  
+  // Mode
+  simulated         Boolean  @default(false)
+  
+  // Relations
+  botTradeEvent     BotTradeEvent? @relation(fields: [botTradeEventId], references: [id])
+  strategyDecision  StrategyDecision? @relation(fields: [strategyDecisionId], references: [id])
+  
+  @@index([botId, timestamp])
+  @@index([timestamp])
+  @@index([asset])
+  @@index([cloid], unique: true) // Ensure idempotency
+}
+
+// ============================================================================
+// Configuration Tables
+// ============================================================================
+
+/// Strategy configuration (singleton table)
+/// Updated via POST /api/settings
+model Settings {
+  id                String   @id @default(uuid())
+  
+  // Mode
+  mode              String   @default("simulation") // "simulation" | "live"
+  
+  // Risk limits
+  globalExposureCap Decimal? @db.Decimal(20, 2) // USD, null = unlimited
+  dailyLossLimit    Decimal? @db.Decimal(20, 2) // USD, null = unlimited
+  
+  // Per-bot config (stored as JSON for flexibility)
+  botConfigs        Json     // Array<{ id, enabled, leverageMultiplier }>
+  
+  // Per-asset exposure caps
+  assetExposureCaps Json     // Record<string, number | null>
+  
+  // Metadata
+  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  updatedBy         String?  // For audit (future: user ID)
+  
+  @@map("settings")
+}
+
+/// System status (singleton table)
+/// Tracks kill switch, connection status, last event times
+model SystemStatus {
+  id                String   @id @default(uuid())
+  
+  // Kill switch
+  killSwitch        Boolean  @default(false)
+  killSwitchActivatedAt DateTime? @db.Timestamptz(6)
+  killSwitchDeactivatedAt DateTime? @db.Timestamptz(6)
+  
+  // Connection status
+  hyperliquidConnected Boolean @default(false)
+  lastHyperliquidCheck DateTime? @db.Timestamptz(6)
+  
+  // Last event timestamps
+  lastEventTime     DateTime? @db.Timestamptz(6)
+  lastOrderTime     DateTime? @db.Timestamptz(6)
+  
+  // System metadata
+  startedAt         DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  
+  @@map("system_status")
+}
+
+// ============================================================================
+// Analytics Tables
+// ============================================================================
+
+/// Time-series equity snapshots
+/// Populated periodically (every 5 minutes or on significant changes)
+model EquitySnapshot {
+  id                String   @id @default(uuid())
+  timestamp         DateTime @db.Timestamptz(6)
+  
+  // Aggregate equity
+  botsAggregate     Decimal  @db.Decimal(20, 2) // Aggregate equity of all bots
+  fadeArena         Decimal  @db.Decimal(20, 2) // Our inverse strategy equity
+  
+  // Per-bot equity (optional, for detailed views)
+  botEquities       Json?    // Record<botId, equity>
+  
+  // Metadata
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
+  
+  @@index([timestamp])
+  @@map("equity_snapshots")
+}
+
+// ============================================================================
+// Audit/Logging Tables (Optional, for future use)
+// ============================================================================
+
+/// System events log (errors, warnings, important state changes)
+model SystemEvent {
+  id                String   @id @default(uuid())
+  timestamp         DateTime @default(now()) @db.Timestamptz(6)
+  level             String   // "info" | "warning" | "error"
+  category          String   // "api" | "trading" | "system" | "config"
+  message           String
+  details           Json?    // Additional context
+  
+  @@index([timestamp])
+  @@index([level])
+  @@index([category])
+  @@map("system_events")
+}
+

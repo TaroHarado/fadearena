@@ -1,0 +1,27 @@
+# Fly.io configuration for FadeArena Worker
+# This file configures the background worker service (no public HTTP)
+
+app = "fadearena-worker"
+primary_region = "fra"
+
+[build]
+  # Build from repo root for monorepo support
+  # When deploying, run: fly deploy --app fadearena-worker --config packages/worker/fly.toml
+  # from the repository root
+  dockerfile = "packages/worker/Dockerfile"
+  dockerignore = ".dockerignore"
+
+[env]
+  NODE_ENV = "production"
+
+[processes]
+  app = "node dist/index.js"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+# No HTTP service - this is a background worker
+# Health checks are handled by the Dockerfile HEALTHCHECK
+

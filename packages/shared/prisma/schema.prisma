@@ -1,0 +1,241 @@
+// FadeArena Database Schema
+// Prisma ORM schema for PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Core Trading Tables
+// ============================================================================
+
+/// Normalized bot trade events (fills and position changes)
+/// Populated by bot-ingestor from Hyperliquid API responses
+model BotTradeEvent {
+  id                String   @id @default(uuid())
+  botId             String   // e.g., "gemini-3-pro"
+  walletAddress     String   // 0x... address
+  timestamp         DateTime
+  eventType         String   // "fill" | "position-change"
+  
+  // Trade details
+  asset             String   // e.g., "BTC"
+  side              String   // "long" | "short"
+  size              String   // Absolute size (always positive) - SQLite stores as String
+  price             String   // SQLite stores as String
+  notional          String   // USD value - SQLite stores as String
+  
+  // Position context (for position changes)
+  previousSize      String?  // Can be negative for short - SQLite stores as String
+  previousNotional  String?  // SQLite stores as String
+  currentSize       String?  // SQLite stores as String
+  currentNotional   String?  // SQLite stores as String
+  
+  // Metadata
+  hyperliquidFillHash String? // For fills, the original hash
+  rawData            String?  // Original Hyperliquid response (JSON as string)
+  
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  strategyDecisions StrategyDecision[]
+  myTrades          MyTrade[]
+  
+  @@index([botId, timestamp])
+  @@index([timestamp])
+  @@index([asset])
+}
+
+/// Strategy decisions made by strategy-engine
+/// Links BotTradeEvent to OrderRequest/OrderResult
+model StrategyDecision {
+  id                String   @id @default(uuid())
+  botTradeEventId   String
+  timestamp         DateTime
+  decision          String   // "execute" | "skip"
+  
+  // Decision details
+  reason            String?  // Why executing
+  skipReason        String?  // Why skipping
+  
+  // Risk checks (stored for audit)
+  riskChecks        String   // { botEnabled, killSwitchActive, ... } (JSON as string)
+  settingsSnapshot  String   // Settings at time of decision (JSON as string)
+  
+  // Relations
+  botTradeEvent     BotTradeEvent @relation(fields: [botTradeEventId], references: [id])
+  myTrades          MyTrade[]
+  
+  @@index([botTradeEventId])
+  @@index([timestamp])
+  @@index([decision])
+}
+
+/// Our executed trades (inverse positions)
+/// Populated by trading-client after order execution
+model MyTrade {
+  id                String   @id @default(uuid())
+  botTradeEventId   String?
+  strategyDecisionId String?
+  timestamp         DateTime
+  
+  // Trade details
+  botId             String   // Which bot triggered this
+  asset             String
+  side              String   // "long" | "short"
+  size              String   // SQLite stores as String
+  price             String   // SQLite stores as String
+  notional          String   // SQLite stores as String
+  
+  // Execution details
+  orderRequest      String   // Full OrderRequest object (JSON as string)
+  orderResult       String?  // Full OrderResult object (JSON as string)
+  hyperliquidOrderId Int?    // From Hyperliquid response
+  cloid             String   // Client order ID (idempotent)
+  
+  // PnL (calculated later)
+  pnl               String?  // SQLite stores as String
+  closedAt          DateTime?
+  
+  // Mode
+  simulated         Boolean  @default(false)
+  
+  // Relations
+  botTradeEvent     BotTradeEvent? @relation(fields: [botTradeEventId], references: [id])
+  strategyDecision  StrategyDecision? @relation(fields: [strategyDecisionId], references: [id])
+  mirrorAccountId   String?  // Reference to MirrorAccount
+  mirrorAccount     MirrorAccount? @relation(fields: [mirrorAccountId], references: [id])
+  
+  @@index([botId, timestamp])
+  @@index([mirrorAccountId])
+  @@index([timestamp])
+  @@index([asset])
+  @@unique([cloid]) // Ensure idempotency
+}
+
+// ============================================================================
+// Configuration Tables
+// ============================================================================
+
+/// Strategy configuration (singleton table)
+/// Updated via POST /api/settings
+model Settings {
+  id                String   @id @default("default")
+  
+  // Mode
+  mode              String   @default("simulation") // "simulation" | "live"
+  
+  // Risk limits
+  globalExposureCap String?  // USD, null = unlimited - SQLite stores as String
+  dailyLossLimit    String?  // USD, null = unlimited - SQLite stores as String
+  
+  // Per-bot config (stored as JSON for flexibility)
+  botConfigs        String   // Array<{ id, enabled, leverageMultiplier }> (JSON as string)
+  
+  // Per-asset exposure caps
+  assetExposureCaps String   // Record<string, number | null> (JSON as string)
+  
+  // Metadata
+  updatedAt         DateTime @default(now()) @updatedAt
+  updatedBy         String?  // For audit (future: user ID)
+  
+  @@map("settings")
+}
+
+/// Mirror account configuration
+/// One-to-one mapping between AI bot wallets and our mirror trading wallets
+model MirrorAccount {
+  id                String   @id // e.g., "gemini-3-pro"
+  botWallet         String   // AI bot wallet address (0x...)
+  myWallet          String   // Our mirror trading wallet address (0x...)
+  label             String?  // Optional human-readable label
+  enabled           Boolean  @default(true)
+  leverageMultiplier String? // Optional leverage multiplier (SQLite stores as String)
+  allocationUsd     String?  // Optional allocation in USD (SQLite stores as String)
+  
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+  
+  // Relations
+  myTrades          MyTrade[]
+  
+  @@unique([botWallet])
+  @@unique([myWallet])
+  @@index([enabled])
+  @@map("mirror_accounts")
+}
+
+/// System status (singleton table)
+/// Tracks kill switch, connection status, last event times
+model SystemStatus {
+  id                String   @id @default("default")
+  
+  // Kill switch
+  killSwitch        Boolean  @default(false)
+  killSwitchActivatedAt DateTime?
+  killSwitchDeactivatedAt DateTime?
+  
+  // Connection status
+  hyperliquidConnected Boolean @default(false)
+  lastHyperliquidCheck DateTime?
+  
+  // Last event timestamps
+  lastEventTime     DateTime?
+  lastOrderTime     DateTime?
+  
+  // System metadata
+  startedAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+  
+  @@map("system_status")
+}
+
+// ============================================================================
+// Analytics Tables
+// ============================================================================
+
+/// Time-series equity snapshots
+/// Populated periodically (every 5 minutes or on significant changes)
+model EquitySnapshot {
+  id                String   @id @default(uuid())
+  timestamp         DateTime
+  
+  // Aggregate equity
+  botsAggregate     String   // Aggregate equity of all bots - SQLite stores as String
+  fadeArena         String   // Our inverse strategy equity - SQLite stores as String
+  
+  // Per-bot equity (optional, for detailed views)
+  botEquities       String?  // Record<botId, equity> (JSON as string)
+  
+  // Metadata
+  createdAt         DateTime @default(now())
+  
+  @@index([timestamp])
+  @@map("equity_snapshots")
+}
+
+// ============================================================================
+// Audit/Logging Tables (Optional, for future use)
+// ============================================================================
+
+/// System events log (errors, warnings, important state changes)
+model SystemEvent {
+  id                String   @id @default(uuid())
+  timestamp         DateTime @default(now())
+  level             String   // "info" | "warning" | "error"
+  category          String   // "api" | "trading" | "system" | "config"
+  message           String
+  details           String?  // Additional context (JSON as string)
+  
+  @@index([timestamp])
+  @@index([level])
+  @@index([category])
+  @@map("system_events")
+}
+

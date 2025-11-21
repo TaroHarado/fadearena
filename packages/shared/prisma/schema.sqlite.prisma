@@ -1,0 +1,21 @@
+// FadeArena Database Schema - SQLite Version
+// Use this for quick local testing without PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Note: SQLite has limitations compared to PostgreSQL
+// Some Prisma features may not work exactly the same
+// This is for development/testing only
+
+// Copy all models from schema.prisma but note:
+// - Decimal types become String in SQLite
+// - Timestamptz becomes DateTime
+// - Some indexes may need adjustment
+

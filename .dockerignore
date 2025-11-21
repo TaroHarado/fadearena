@@ -1,0 +1,49 @@
+# Node modules - игнорируем все node_modules на всех уровнях
+node_modules
+**/node_modules
+**/node_modules/**
+
+# Build outputs
+.next
+dist
+**/dist
+
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Test coverage
+coverage
+.nyc_output
+
+# Documentation (keep only essential)
+README.md
+*.md
+!DEPLOYMENT_RUNBOOK.md
+
+# Docker files (except the one we're using)
+docker-compose*.yml
+.dockerignore
+
+# Prisma generated client (will be generated inside container)
+**/node_modules/.prisma
+**/.prisma
+

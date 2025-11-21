@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-terminal-border;
+  }
+  
+  body {
+    @apply bg-terminal-bg text-terminal-text font-mono antialiased;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+@layer components {
+  /* Card style - thin borders, light background */
+  .card {
+    @apply bg-terminal-surface border border-terminal-border rounded-sm p-4;
+  }
+  
+  /* Button style */
+  .btn {
+    @apply px-4 py-2 border border-terminal-border bg-terminal-surface 
+           hover:bg-terminal-bg transition-colors duration-150
+           uppercase text-xs font-medium tracking-wide;
+  }
+  
+  .btn-primary {
+    @apply bg-terminal-text text-terminal-bg hover:bg-terminal-text/90;
+  }
+  
+  /* Input style */
+  .input {
+    @apply w-full px-3 py-2 border border-terminal-border bg-terminal-surface
+           focus:outline-none focus:ring-1 focus:ring-terminal-text
+           font-mono text-sm;
+  }
+  
+  /* Label style - small uppercase */
+  .label {
+    @apply text-xs uppercase tracking-wider text-terminal-textMuted font-medium mb-1 block;
+  }
+  
+  /* Monospace numbers */
+  .number {
+    @apply font-mono tabular-nums;
+  }
+  
+  /* PnL colors */
+  .pnl-positive {
+    @apply text-terminal-green;
+  }
+  
+  .pnl-negative {
+    @apply text-terminal-red;
+  }
+  
+  /* Status pill */
+  .pill {
+    @apply inline-flex items-center px-2 py-1 text-xs uppercase tracking-wider
+           border border-terminal-border bg-terminal-surface font-medium;
+  }
+  
+  .pill-success {
+    @apply border-terminal-green text-terminal-green bg-terminal-green/5;
+  }
+  
+  .pill-danger {
+    @apply border-terminal-red text-terminal-red bg-terminal-red/5;
+  }
+  
+  .pill-warning {
+    @apply border-terminal-amber text-terminal-amber bg-terminal-amber/5;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-terminal-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-terminal-border hover:bg-terminal-textMuted;
+}
+

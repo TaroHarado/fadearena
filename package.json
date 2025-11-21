@@ -1,0 +1,32 @@
+{
+  "name": "fadearena",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FadeArena - Contrarian trading bot on Hyperliquid",
+  "scripts": {
+    "dev": "pnpm --filter \"./packages/api\" --filter \"./packages/worker\" --filter \"./apps/web\" --parallel dev",
+    "dev:api": "pnpm --filter @fadearena/api dev",
+    "dev:worker": "pnpm --filter @fadearena/worker dev",
+    "dev:web": "pnpm --filter @fadearena/web dev",
+    "build": "pnpm -r build",
+    "db:generate": "pnpm --filter @fadearena/shared db:generate",
+    "db:migrate": "pnpm --filter @fadearena/shared db:migrate",
+    "db:migrate:deploy": "pnpm --filter @fadearena/shared db:migrate:deploy",
+    "db:seed": "pnpm --filter @fadearena/shared db:seed",
+    "db:reset": "pnpm --filter @fadearena/shared exec prisma migrate reset --schema=./prisma/schema.prisma --force",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test:hyperliquid": "tsx scripts/testHyperliquid.ts",
+    "debug:hyperliquid": "tsx scripts/rawHyperliquid.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "dotenv": "^17.2.3",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
