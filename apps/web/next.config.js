@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const path = require('path')
+
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@fadearena/shared'],
@@ -12,6 +14,11 @@ const nextConfig = {
         ...config.resolve.fallback,
         fs: false,
       }
+    }
+    // Явно настраиваем пути для разрешения модулей
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, './'),
     }
     return config
   },
