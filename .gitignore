@@ -38,6 +38,13 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
 # Prisma
 prisma/migrations/
 
