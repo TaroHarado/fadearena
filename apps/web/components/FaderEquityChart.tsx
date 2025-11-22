@@ -235,9 +235,10 @@ export default function FaderEquityChart() {
                 }
                 return value;
               }}
-              formatter={(value: any) => {
+              formatter={(value: unknown) => {
                 if (value === null || value === undefined) return 'N/A';
-                return `$${Number(value).toFixed(2)}`;
+                const numValue = Array.isArray(value) ? value[0] : value;
+                return `$${Number(numValue).toFixed(2)}`;
               }}
             />
             <Legend />

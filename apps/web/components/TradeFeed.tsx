@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { STATIC_POSITIONS } from '@/data/staticData'
+import type { TradeResponse } from '@fadearena/shared'
 
 // Преобразуем позиции в сделки для отображения
 // Используем entryTimestamp из позиций, если он есть, иначе генерируем фиксированное время
-function positionsToTrades() {
-  const trades: any[] = []
+function positionsToTrades(): TradeResponse[] {
+  const trades: TradeResponse[] = []
   const now = Date.now()
   const baseTime = new Date()
   baseTime.setHours(10, 0, 0, 0) // 10:00 AM сегодня как базовое время
@@ -40,7 +41,7 @@ function positionsToTrades() {
 }
 
 export function TradeFeed() {
-  const [trades, setTrades] = useState<any[]>([])
+  const [trades, setTrades] = useState<TradeResponse[]>([])
   
   // Генерируем данные только на клиенте, чтобы избежать hydration ошибок
   useEffect(() => {
@@ -90,7 +91,8 @@ export function TradeFeed() {
           </thead>
           <tbody>
             {trades.map((trade) => {
-              const pnlColor = trade.pnl >= 0 ? 'pnl-positive' : 'pnl-negative'
+              const pnlValue = trade.pnl ?? 0
+              const pnlColor = pnlValue >= 0 ? 'pnl-positive' : 'pnl-negative'
               const sideColor = trade.side === 'long' ? '#10b981' : '#ef4444'
               
               return (
@@ -131,8 +133,8 @@ export function TradeFeed() {
                     })}
                   </td>
                   <td className={`py-2 px-3 text-right number font-mono ${pnlColor}`}>
-                    {trade.pnl >= 0 ? '+' : ''}
-                    ${trade.pnl.toLocaleString(undefined, {
+                    {pnlValue >= 0 ? '+' : ''}
+                    ${pnlValue.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}

@@ -5,11 +5,29 @@ import type { TradeResponse, BotTradeEvent } from '@fadearena/shared'
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3002/ws'
 
+interface StateUpdate {
+  mode?: string
+  killSwitch?: boolean
+  equity?: {
+    total: number
+    botsAggregate: number
+    fadeArena: number
+  }
+  [key: string]: unknown
+}
+
+interface SettingsUpdate {
+  mode?: string
+  killSwitch?: boolean
+  leverageMultiplier?: number
+  [key: string]: unknown
+}
+
 interface LiveEvents {
   botTrade: BotTradeEvent | null
   myTrade: TradeResponse | null
-  stateUpdate: any | null
-  settingsUpdate: any | null
+  stateUpdate: StateUpdate | null
+  settingsUpdate: SettingsUpdate | null
 }
 
 export function useLiveEvents() {
