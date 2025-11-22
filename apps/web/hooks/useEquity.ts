@@ -1,7 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
-import type { EquityResponse } from '@fadearena/shared'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+
+interface EquityPoint {
+  timestamp: number
+  botsAggregate: number
+  fadeArena: number
+}
+
+interface EquityResponse {
+  series: EquityPoint[]
+  interval: string
+  startTime: number
+  endTime: number
+}
 
 interface UseEquityOptions {
   startTime?: number
