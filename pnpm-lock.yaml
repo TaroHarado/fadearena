@@ -130,6 +130,9 @@ importers:
         specifier: ^8.17.0
         version: 8.21.0
     devDependencies:
+      '@types/node':
+        specifier: ^20.10.0
+        version: 20.19.25
       dotenv-cli:
         specifier: ^7.4.2
         version: 7.4.4
