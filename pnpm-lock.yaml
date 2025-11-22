@@ -32,6 +32,15 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.17.0
         version: 5.90.10(react@18.3.1)
+      '@types/node':
+        specifier: ^20.10.0
+        version: 20.19.25
+      '@types/react':
+        specifier: ^18.2.45
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.3.7(@types/react@18.3.27)
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.22(postcss@8.5.6)
@@ -56,22 +65,12 @@ importers:
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.18(tsx@4.20.6)
-      zod:
-        specifier: ^3.22.4
-        version: 3.25.76
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
-      '@types/react':
-        specifier: ^18.2.45
-        version: 18.3.27
-      '@types/react-dom':
-        specifier: ^18.2.18
-        version: 18.3.7(@types/react@18.3.27)
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
 
   packages/api:
     dependencies:
@@ -699,7 +698,6 @@ packages:
     resolution: {integrity: sha512-ZsJzA5thDQMSQO788d7IocwwQbI8B5OPzmqNvpf3NY/+MHDAS759Wo0gd2WQeXYt5AAAQjzcrTVC6SKCuYgoCQ==}
     dependencies:
       undici-types: 6.21.0
-    dev: true
 
   /@types/node@22.7.5:
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
@@ -709,7 +707,7 @@ packages:
 
   /@types/prop-types@15.7.15:
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
-    dev: true
+    dev: false
 
   /@types/qs@6.14.0:
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -725,14 +723,14 @@ packages:
       '@types/react': ^18.0.0
     dependencies:
       '@types/react': 18.3.27
-    dev: true
+    dev: false
 
   /@types/react@18.3.27:
     resolution: {integrity: sha512-cisd7gxkzjBKU2GgdYrTdtQx1SORymWyaAFhaxQPK9bYO9ot3Y5OikQRvY0VYQtvwjeQnizCINJAenh/V7MK2w==}
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.2.3
-    dev: true
+    dev: false
 
   /@types/send@0.17.6:
     resolution: {integrity: sha512-Uqt8rPBE8SY0RK8JB1EzVOIZ32uqy8HwdxCnoCOsYrvnswqmFZ/k+9Ikidlk/ImhsdvBsloHbAlewb2IEBV/Og==}
@@ -997,6 +995,7 @@ packages:
 
   /csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
+    dev: false
 
   /d3-array@3.2.4:
     resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
@@ -2431,7 +2430,6 @@ packages:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
@@ -2439,7 +2437,6 @@ packages:
 
   /undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-    dev: true
 
   /unpipe@1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
