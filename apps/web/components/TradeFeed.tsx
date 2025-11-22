@@ -2,7 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import { STATIC_POSITIONS } from '@/data/staticData'
-import type { TradeResponse } from '@fadearena/shared'
+
+interface TradeResponse {
+  id: string
+  type: 'bot' | 'mine'
+  botId: string | null
+  timestamp: number
+  asset: string
+  side: 'long' | 'short'
+  size: number
+  price: number
+  notional: number
+  pnl: number | null
+  simulated: boolean
+}
 
 // Преобразуем позиции в сделки для отображения
 // Используем entryTimestamp из позиций, если он есть, иначе генерируем фиксированное время
