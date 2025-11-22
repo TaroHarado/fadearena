@@ -47,8 +47,17 @@ type ChartDataPoint = {
 function generateInitialChartData(): ChartDataPoint[] {
   const now = Date.now();
   const today = new Date();
-  today.setHours(21, 0, 0, 0); // 09:00 PM
-  const startTime = today.getTime();
+  const currentHour = today.getHours();
+  
+  // Определяем стартовое время: если сейчас раньше 21:00, начинаем с 21:00 вчерашнего дня
+  // Иначе начинаем с 21:00 сегодня
+  let startDate = new Date(today);
+  if (currentHour < 21) {
+    // Если сейчас раньше 21:00, начинаем с 21:00 вчерашнего дня
+    startDate.setDate(startDate.getDate() - 1);
+  }
+  startDate.setHours(21, 0, 0, 0); // 09:00 PM
+  const startTime = startDate.getTime();
   
   // Генерируем точки каждую минуту с 09:00 PM до текущего времени
   // Каждая точка имеет небольшое отклонение от предыдущей для естественных колебаний
@@ -57,6 +66,16 @@ function generateInitialChartData(): ChartDataPoint[] {
   
   // Текущие значения для каждой линии (начинаем с базовых)
   const currentValues: Record<string, number> = { ...BASE_VALUES };
+  
+  // Генерируем данные с детерминированным seed для одинаковых колебаний при каждом рендере
+  // Используем простой seed на основе времени для стабильности
+  let seed = Math.floor(startTime / 1000);
+  
+  // Простая функция для генерации псевдослучайных чисел с seed
+  const seededRandom = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
   
   for (let t = startTime; t <= now; t += 60 * 1000) {
     const point: ChartDataPoint = {
@@ -75,8 +94,8 @@ function generateInitialChartData(): ChartDataPoint[] {
     
     // Обновляем каждое значение с небольшим случайным изменением
     for (const label of FADER_LABELS) {
-      // Генерируем изменение от -0.01% до +0.01%
-      const change = (Math.random() - 0.5) * 2 * variation;
+      // Генерируем изменение от -0.01% до +0.01% используя seeded random
+      const change = (seededRandom() - 0.5) * 2 * variation;
       currentValues[label] = currentValues[label] * (1 + change);
       (point as any)[label] = currentValues[label];
     }
