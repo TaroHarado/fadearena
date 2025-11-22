@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd ../.. && pnpm install && pnpm --filter @fadearena/web build",
+  "buildCommand": "cd ../.. && pnpm install && pnpm --filter @fadearena/shared build && pnpm --filter @fadearena/web build",
   "outputDirectory": ".next",
   "installCommand": "pnpm install",
   "framework": "nextjs"
