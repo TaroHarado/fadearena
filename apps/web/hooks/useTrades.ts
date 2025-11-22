@@ -1,5 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
-import type { TradeResponse } from '@fadearena/shared'
+
+interface TradeResponse {
+  id: string
+  type: 'bot' | 'mine'
+  botId: string | null
+  timestamp: number
+  asset: string
+  side: 'long' | 'short'
+  size: number
+  price: number
+  notional: number
+  pnl: number | null
+  simulated: boolean
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 

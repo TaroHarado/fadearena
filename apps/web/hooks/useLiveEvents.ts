@@ -1,7 +1,33 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import type { TradeResponse, BotTradeEvent } from '@fadearena/shared'
+
+interface TradeResponse {
+  id: string
+  type: 'bot' | 'mine'
+  botId: string | null
+  timestamp: number
+  asset: string
+  side: 'long' | 'short'
+  size: number
+  price: number
+  notional: number
+  pnl: number | null
+  simulated: boolean
+}
+
+interface BotTradeEvent {
+  id: string
+  botId: string
+  walletAddress: string
+  timestamp: number
+  eventType: 'fill' | 'position-change'
+  asset: string
+  side: 'long' | 'short'
+  size: number
+  price: number
+  notional: number
+}
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3002/ws'
 

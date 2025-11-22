@@ -1,5 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Settings } from '@fadearena/shared'
+
+interface Settings {
+  mode: 'simulation' | 'live'
+  globalExposureCap: number | null
+  dailyLossLimit: number | null
+  bots: Array<{
+    id: string
+    name: string
+    walletAddress: string
+    enabled: boolean
+    leverageMultiplier: number
+  }>
+  assetExposureCaps: Record<string, number | null>
+  killSwitch: boolean
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 

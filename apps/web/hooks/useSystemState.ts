@@ -1,5 +1,28 @@
 import { useQuery } from '@tanstack/react-query'
-import type { StateResponse } from '@fadearena/shared'
+
+interface StateResponse {
+  mode: 'simulation' | 'live'
+  killSwitch: boolean
+  equity: {
+    total: number
+    botsAggregate: number
+    fadeArena: number
+  }
+  openPositions: {
+    count: number
+    totalNotional: number
+  }
+  systemStatus: {
+    hyperliquidConnected: boolean
+    lastEventTime: number | null
+    lastOrderTime: number | null
+    uptime: number
+  }
+  dailyPnL: {
+    bots: number
+    fadeArena: number
+  }
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
