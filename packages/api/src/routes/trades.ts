@@ -103,7 +103,11 @@ export function createTradesRouter(prisma: PrismaClient) {
         },
       });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to get trades' });
+      console.error('Trades route error:', error);
+      res.status(500).json({ 
+        error: 'Failed to get trades',
+        message: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 

@@ -196,6 +196,28 @@ model SystemStatus {
   @@map("system_status")
 }
 
+/// Fader equity snapshots (time-series data for charts)
+model FaderEquitySnapshot {
+  id        String   @id @default(uuid())
+  timestamp DateTime
+  data      String   // JSON: { wallets: [{ label, address, equityUsd }] }
+  createdAt DateTime @default(now())
+  
+  @@index([timestamp])
+  @@map("fader_equity_snapshots")
+}
+
+/// Asset prices snapshots (market prices for trading assets)
+model AssetPriceSnapshot {
+  id        String   @id @default(uuid())
+  timestamp DateTime
+  data      String   // JSON: { prices: [{ ticker, symbol, price }] }
+  createdAt DateTime @default(now())
+  
+  @@index([timestamp])
+  @@map("asset_price_snapshots")
+}
+
 // ============================================================================
 // Analytics Tables
 // ============================================================================

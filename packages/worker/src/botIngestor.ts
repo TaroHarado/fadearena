@@ -8,14 +8,14 @@
 import { EventEmitter } from 'events';
 import pino from 'pino';
 import { PrismaClient } from '@fadearena/shared';
-import { HyperliquidClient } from './hyperliquidClient';
+import { HyperliquidInfoClient } from './hyperliquidClient';
 import type { BotTradeEvent, BotConfig } from '@fadearena/shared';
 
 const logger = pino({ name: 'BotIngestor' });
 
 export class BotIngestor extends EventEmitter {
   private prisma: PrismaClient;
-  private hyperliquid: HyperliquidClient;
+  private infoClient: HyperliquidInfoClient;
   private bots: BotConfig[];
   private pollingInterval: number;
   private isRunning = false;
@@ -26,13 +26,13 @@ export class BotIngestor extends EventEmitter {
 
   constructor(
     prisma: PrismaClient,
-    hyperliquid: HyperliquidClient,
+    infoClient: HyperliquidInfoClient,
     bots: BotConfig[],
     pollingIntervalMs: number
   ) {
     super();
     this.prisma = prisma;
-    this.hyperliquid = hyperliquid;
+    this.infoClient = infoClient;
     this.bots = bots;
     this.pollingInterval = pollingIntervalMs;
   }
@@ -49,7 +49,15 @@ export class BotIngestor extends EventEmitter {
     this.isRunning = true;
     logger.info({ botCount: this.bots.length, interval: this.pollingInterval }, 'Starting bot ingestor');
 
-    // Initial poll
+    // Initialize lastSeenFills to current time - we only want to process NEW trades from now on
+    // This ensures we don't copy old/existing positions, only new trades after worker starts
+    const now = Date.now();
+    for (const bot of this.bots) {
+      this.lastSeenFills.set(bot.walletAddress, now);
+      logger.info({ botId: bot.id }, 'Initialized - will only process NEW trades from now on');
+    }
+
+    // Initial poll (will skip old fills)
     await this.pollAllBots();
 
     // Set up periodic polling
@@ -78,34 +86,45 @@ export class BotIngestor extends EventEmitter {
   }
 
   /**
-   * Poll all bot wallets
+   * Poll all bot wallets sequentially to avoid rate limiting
    */
   private async pollAllBots(): Promise<void> {
-    const promises = this.bots.map((bot) => this.pollBot(bot));
-    await Promise.allSettled(promises);
+    // Poll bots sequentially with delay to avoid rate limiting
+    // Hyperliquid rate limit: ~1 request per second per IP
+    // With 6 bots, we need at least 6 seconds between cycles
+    // Increased delay to 5 seconds per bot to be safe
+    for (const bot of this.bots) {
+      await this.pollBot(bot);
+      // Wait 5 seconds between each bot to respect rate limits
+      // 6 bots * 5 seconds = 30 seconds minimum per cycle
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
   }
 
   /**
    * Poll a single bot wallet
+   * 
+   * IMPORTANT: We only poll fills to detect NEW trades.
+   * Fills contain all the information we need (coin, side, size, price, time).
+   * We don't need to poll state separately - fills are sufficient for tracking trades.
    */
   private async pollBot(bot: BotConfig): Promise<void> {
     try {
-      // Poll both fills and state
-      const [fillsResponse, stateResponse] = await Promise.all([
-        this.hyperliquid.info.getUserFills(bot.walletAddress),
-        this.hyperliquid.info.getUserState(bot.walletAddress).catch(() => null),
-      ]);
+      // Only poll fills - this is enough to detect new trades
+      // Use userFillsByTime to get only recent fills (last 5 minutes)
+      // This reduces API load and avoids rate limiting
+      const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+      const fillsResponse = await this.infoClient.getUserFills(
+        bot.walletAddress,
+        fiveMinutesAgo,
+        Date.now()
+      ).catch(() => ({ fills: [] }));
 
       // Process fills
-      if (fillsResponse.fills) {
+      if (fillsResponse.fills && fillsResponse.fills.length > 0) {
         for (const fill of fillsResponse.fills) {
           await this.processFill(bot, fill);
         }
-      }
-
-      // Process position changes
-      if (stateResponse) {
-        await this.processPositionChanges(bot, stateResponse);
       }
 
       // Update system status
@@ -193,17 +212,23 @@ export class BotIngestor extends EventEmitter {
       const currentNotional = Math.abs(parseFloat(position.notional));
       const previous = previousPositions.get(position.coin);
 
-      // Check if position changed significantly (> 1% change)
+      // Check if position changed significantly (> 1% change) or closed
       if (previous) {
-        const sizeChange = Math.abs(currentSize - previous.size);
-        const notionalChange = Math.abs(currentNotional - previous.notional);
-        const changePercent = (notionalChange / previous.notional) * 100;
+        // If bot closed position (was > 0, now = 0), emit event
+        if (previous.size !== 0 && currentSize === 0) {
+          // Position closed - emit event to close our position
+        } else {
+          // Position changed - check if significant
+          const sizeChange = Math.abs(currentSize - previous.size);
+          const notionalChange = Math.abs(currentNotional - previous.notional);
+          const changePercent = (notionalChange / previous.notional) * 100;
 
-        if (changePercent < 1) {
-          continue; // Ignore small changes
+          if (changePercent < 1) {
+            continue; // Ignore small changes
+          }
         }
       } else if (currentSize === 0) {
-        continue; // No position, skip
+        continue; // No position and no previous position, skip
       }
 
       // Create position change event

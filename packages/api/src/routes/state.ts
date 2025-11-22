@@ -72,7 +72,11 @@ export function createStateRouter(prisma: PrismaClient) {
 
       res.json(response);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to get state' });
+      console.error('State route error:', error);
+      res.status(500).json({ 
+        error: 'Failed to get state',
+        message: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 

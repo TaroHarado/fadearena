@@ -84,7 +84,7 @@ export async function computeMetrics(prisma: PrismaClient): Promise<Metrics> {
     },
   });
 
-  const realizedPnL = allTrades.reduce((sum, trade) => {
+  const realizedPnL = allTrades.reduce((sum: number, trade: { pnl: string | null }) => {
     return sum + (trade.pnl ? Number(trade.pnl) : 0);
   }, 0);
 
@@ -98,7 +98,7 @@ export async function computeMetrics(prisma: PrismaClient): Promise<Metrics> {
     },
   });
 
-  const dailyPnL = dailyTrades.reduce((sum, trade) => {
+  const dailyPnL = dailyTrades.reduce((sum: number, trade: { pnl: string | null }) => {
     return sum + (trade.pnl ? Number(trade.pnl) : 0);
   }, 0);
 

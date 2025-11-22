@@ -54,13 +54,16 @@ export function BotTable() {
                 Wallet
               </th>
               <th className="text-right py-2 px-3 uppercase text-xs font-medium text-terminal-textMuted">
+                Positions
+              </th>
+              <th className="text-right py-2 px-3 uppercase text-xs font-medium text-terminal-textMuted">
+                Unrealized PnL
+              </th>
+              <th className="text-right py-2 px-3 uppercase text-xs font-medium text-terminal-textMuted">
                 Total PnL
               </th>
               <th className="text-right py-2 px-3 uppercase text-xs font-medium text-terminal-textMuted">
                 Daily PnL
-              </th>
-              <th className="text-right py-2 px-3 uppercase text-xs font-medium text-terminal-textMuted">
-                Trades
               </th>
               <th className="text-right py-2 px-3 uppercase text-xs font-medium text-terminal-textMuted">
                 Win Rate
@@ -85,10 +88,10 @@ export function BotTable() {
                   <td className="py-3 px-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <span className="font-mono text-xs text-terminal-textMuted">
-                        {bot.walletAddress.slice(0, 6)}...{bot.walletAddress.slice(-4)}
+                        {(bot.faderWalletAddress || bot.walletAddress).slice(0, 6)}...{(bot.faderWalletAddress || bot.walletAddress).slice(-4)}
                       </span>
                       <a
-                        href={`https://app.hyperliquid.xyz/address/${bot.walletAddress}`}
+                        href={`https://app.hyperliquid.xyz/explorer/address/${bot.faderWalletAddress || bot.walletAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-terminal-textMuted hover:text-terminal-text transition-colors"
@@ -98,12 +101,28 @@ export function BotTable() {
                       </a>
                     </div>
                   </td>
+                  <td className="py-3 px-3 text-right number">
+                    {bot.currentOpenPositions ?? 0}
+                  </td>
                   <td
                     className={`py-3 px-3 text-right number ${
-                      bot.stats.totalPnL >= 0 ? 'pnl-positive' : 'pnl-negative'
+                      (bot.currentUnrealizedPnL ?? 0) >= 0 ? 'pnl-positive' : 'pnl-negative'
                     }`}
                   >
-                    ${bot.stats.totalPnL.toLocaleString(2)}
+                    ${(bot.currentUnrealizedPnL ?? 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td
+                    className={`py-3 px-3 text-right number ${
+                      (bot.stats.totalPnL + (bot.currentUnrealizedPnL ?? 0)) >= 0 ? 'pnl-positive' : 'pnl-negative'
+                    }`}
+                  >
+                    ${(bot.stats.totalPnL + (bot.currentUnrealizedPnL ?? 0)).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </td>
                   <td
                     className={`py-3 px-3 text-right number ${
@@ -111,9 +130,6 @@ export function BotTable() {
                     }`}
                   >
                     ${bot.stats.dailyPnL.toLocaleString(2)}
-                  </td>
-                  <td className="py-3 px-3 text-right number">
-                    {bot.stats.totalTrades}
                   </td>
                   <td className="py-3 px-3 text-right number">
                     {(bot.stats.winRate * 100).toFixed(1)}%

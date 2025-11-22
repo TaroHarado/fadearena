@@ -12,23 +12,94 @@
     font-size: 13px;
     line-height: 1.6;
   }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Fade in animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fade-in-delay {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+  
+  .animate-fade-in-delay {
+    animation: fade-in-delay 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.5s ease-out forwards;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
 }
 
 @layer components {
-  /* Card style - thin borders, light background */
+  /* Card style - thin borders, light background with animations */
   .card {
-    @apply bg-terminal-surface border border-terminal-border rounded-sm p-4;
+    @apply bg-terminal-surface border border-terminal-border rounded-sm p-4
+           transition-all duration-300 hover:border-terminal-text/30
+           hover:shadow-lg hover:shadow-terminal-text/10;
   }
   
-  /* Button style */
+  /* Button style with enhanced animations */
   .btn {
     @apply px-4 py-2 border border-terminal-border bg-terminal-surface 
-           hover:bg-terminal-bg transition-colors duration-150
-           uppercase text-xs font-medium tracking-wide;
+           hover:bg-terminal-bg transition-all duration-300
+           uppercase text-xs font-medium tracking-wide
+           hover:scale-105 active:scale-95;
   }
   
   .btn-primary {
-    @apply bg-terminal-text text-terminal-bg hover:bg-terminal-text/90;
+    @apply bg-terminal-text text-terminal-bg hover:bg-terminal-text/90
+           hover:shadow-lg hover:shadow-terminal-text/30;
   }
   
   /* Input style */

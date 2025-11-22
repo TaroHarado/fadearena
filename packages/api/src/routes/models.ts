@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@fadearena/shared';
 import type { ModelResponse } from '@fadearena/shared';
+import { getUserPositions } from './positions';
 
 const router = Router();
 
@@ -76,10 +77,45 @@ export function createModelsRouter(prisma: PrismaClient) {
             });
           }
 
+          // Get fader wallet address from env if mirrorAccount doesn't have it
+          const getFaderWallet = (botId: string): string => {
+            if (mirrorAccount?.myWallet) {
+              return mirrorAccount.myWallet;
+            }
+            // Fallback to env vars
+            const envVarMap: Record<string, string> = {
+              'gemini-3-pro': 'MY_GEMINI_FADE_WALLET',
+              'grok-4': 'MY_GROK_FADE_WALLET',
+              'qwen3-max': 'MY_QWEN_FADE_WALLET',
+              'kimi-k2-thinking': 'MY_KIMI_FADE_WALLET',
+              'deepseek-chat-v3.1': 'MY_DEEPSEEK_FADE_WALLET',
+              'claude-sonnet': 'MY_CLAUDE_FADE_WALLET',
+            };
+            const envVar = envVarMap[botId];
+            return envVar ? (process.env[envVar] || '') : '';
+          };
+
+          // Get current open positions from Hyperliquid API (real-time)
+          const faderWalletAddress = getFaderWallet(config.id);
+          let currentOpenPositions = 0;
+          let currentUnrealizedPnL = 0;
+          
+          if (faderWalletAddress) {
+            try {
+              const positions = await getUserPositions(faderWalletAddress);
+              currentOpenPositions = positions.length;
+              currentUnrealizedPnL = positions.reduce((sum, p) => sum + p.unrealizedPnl, 0);
+            } catch (error) {
+              console.error(`Error fetching positions for ${config.id}:`, error);
+              // Continue with 0 if error
+            }
+          }
+
           return {
             id: config.id,
             name: config.name || config.id,
             walletAddress: config.walletAddress || mirrorAccount?.botWallet || '',
+            faderWalletAddress: faderWalletAddress,
             enabled: config.enabled && (mirrorAccount?.enabled ?? true),
             leverageMultiplier: mirrorAccount?.leverageMultiplier 
               ? Number(mirrorAccount.leverageMultiplier) 
@@ -100,6 +136,9 @@ export function createModelsRouter(prisma: PrismaClient) {
             } : null,
             currentPositions,
             myMirroredPositions,
+            // Current open positions from Hyperliquid (real-time)
+            currentOpenPositions,
+            currentUnrealizedPnL,
             stats: {
               totalTrades,
               winRate,

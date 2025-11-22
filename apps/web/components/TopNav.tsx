@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSystemState } from '@/hooks/useSystemState'
 
 export function TopNav() {
@@ -11,8 +12,15 @@ export function TopNav() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
-          <Link href="/dashboard" className="font-mono text-lg font-bold">
-            FadeArena
+          <Link href="/" className="flex items-center gap-3 font-mono text-lg font-bold">
+            <Image
+              src="/logo.png"
+              alt="FadeArena Logo"
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
+            <span>FadeArena</span>
           </Link>
 
           {/* Nav Links */}
@@ -25,8 +33,27 @@ export function TopNav() {
             </Link>
           </div>
 
-          {/* Status Indicators */}
+          {/* Right side: Social buttons + Status */}
           <div className="flex items-center gap-3">
+            {/* Social buttons */}
+            <a
+              href="https://x.com/fadearena_com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-xs font-medium text-terminal-text"
+            >
+              Twitter
+            </a>
+            <a
+              href="https://pump.fun"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-xs font-medium text-terminal-text"
+            >
+              Pump.fun
+            </a>
+
+            {/* Status Indicators */}
             {state && (
               <>
                 <span

@@ -89,8 +89,11 @@ export function loadConfig(): AppConfig {
     },
     bots,
     polling: {
-      botStateInterval: parseInt(process.env.BOT_STATE_INTERVAL_MS || '5000', 10),
-      reconciliationInterval: parseInt(process.env.RECONCILIATION_INTERVAL_MS || '60000', 10),
+      // Increased to 120 seconds to respect Hyperliquid rate limits
+      // With 6 bots, sequential polling with 5s delays takes ~30 seconds
+      // Plus buffer time to avoid rate limiting
+      botStateInterval: parseInt(process.env.BOT_STATE_INTERVAL_MS || '120000', 10), // 2 minutes
+      reconciliationInterval: parseInt(process.env.RECONCILIATION_INTERVAL_MS || '120000', 10),
     },
     risk: {
       defaultLeverageMultiplier: parseFloat(process.env.DEFAULT_LEVERAGE_MULTIPLIER || '1.0'),

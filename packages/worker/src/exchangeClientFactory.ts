@@ -70,8 +70,33 @@ export class ExchangeClientFactory {
     }
 
     // In live mode, we need the private key from environment
+    // Try multiple naming conventions
     const privateKeyEnvVar = this.getPrivateKeyEnvVar(mirrorAccountId);
-    const privateKey = process.env[privateKeyEnvVar];
+    let privateKey = process.env[privateKeyEnvVar];
+    
+    // If not found, try alternative names
+    if (!privateKey) {
+      const envVarMap: Record<string, string[]> = {
+        'gemini-3-pro': ['MY_GEMINI_FADE_PK', 'MY_GEMINI_FADE_PRIVATE_KEY'],
+        'grok-4': ['MY_GROK_FADE_PK', 'MY_GROK_FADE_PRIVATE_KEY'],
+        'qwen3-max': ['MY_QWEN_FADE_PK', 'MY_QWEN_FADE_PRIVATE_KEY'],
+        'kimi-k2-thinking': ['MY_KIMI_FADE_PK', 'MY_KIMI_FADE_PRIVATE_KEY'],
+        'deepseek-chat-v3.1': ['MY_DEEPSEEK_FADE_PK', 'MY_DEEPSEEK_FADE_PRIVATE_KEY'],
+        'claude-sonnet': ['MY_CLAUDE_FADE_PK', 'MY_CLAUDE_FADE_PRIVATE_KEY'],
+      };
+      
+      const variants = envVarMap[mirrorAccountId] || [
+        `MY_${mirrorAccountId.toUpperCase().replace(/-/g, '_')}_FADE_PK`,
+        `MY_${mirrorAccountId.toUpperCase().replace(/-/g, '_')}_FADE_PRIVATE_KEY`,
+      ];
+      
+      for (const variant of variants) {
+        if (process.env[variant]) {
+          privateKey = process.env[variant];
+          break;
+        }
+      }
+    }
 
     if (!privateKey) {
       logger.error(
@@ -97,16 +122,30 @@ export class ExchangeClientFactory {
    */
   private getPrivateKeyEnvVar(mirrorAccountId: string): string {
     // Map bot IDs to env var names
-    const envVarMap: Record<string, string> = {
-      'gemini-3-pro': 'MY_GEMINI_FADE_PRIVATE_KEY',
-      'grok-4': 'MY_GROK_FADE_PRIVATE_KEY',
-      'qwen3-max': 'MY_QWEN_FADE_PRIVATE_KEY',
-      'kimi-k2-thinking': 'MY_KIMI_FADE_PRIVATE_KEY',
-      'deepseek-chat-v3.1': 'MY_DEEPSEEK_FADE_PRIVATE_KEY',
-      'claude-sonnet': 'MY_CLAUDE_FADE_PRIVATE_KEY',
+    // Support both _PK and _PRIVATE_KEY naming conventions
+    const envVarMap: Record<string, string[]> = {
+      'gemini-3-pro': ['MY_GEMINI_FADE_PK', 'MY_GEMINI_FADE_PRIVATE_KEY'],
+      'grok-4': ['MY_GROK_FADE_PK', 'MY_GROK_FADE_PRIVATE_KEY'],
+      'qwen3-max': ['MY_QWEN_FADE_PK', 'MY_QWEN_FADE_PRIVATE_KEY'],
+      'kimi-k2-thinking': ['MY_KIMI_FADE_PK', 'MY_KIMI_FADE_PRIVATE_KEY'],
+      'deepseek-chat-v3.1': ['MY_DEEPSEEK_FADE_PK', 'MY_DEEPSEEK_FADE_PRIVATE_KEY'],
+      'claude-sonnet': ['MY_CLAUDE_FADE_PK', 'MY_CLAUDE_FADE_PRIVATE_KEY'],
     };
 
-    return envVarMap[mirrorAccountId] || `MY_${mirrorAccountId.toUpperCase().replace(/-/g, '_')}_FADE_PRIVATE_KEY`;
+    const variants = envVarMap[mirrorAccountId] || [
+      `MY_${mirrorAccountId.toUpperCase().replace(/-/g, '_')}_FADE_PK`,
+      `MY_${mirrorAccountId.toUpperCase().replace(/-/g, '_')}_FADE_PRIVATE_KEY`,
+    ];
+
+    // Try each variant and return the first one that exists
+    for (const variant of variants) {
+      if (process.env[variant]) {
+        return variant;
+      }
+    }
+
+    // Return the first variant as default (for error messages)
+    return variants[0];
   }
 
   /**

@@ -5,17 +5,21 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "db:generate": "prisma generate --schema=./prisma/schema.prisma",
-    "db:migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
-    "db:migrate:deploy": "prisma migrate deploy --schema=./prisma/schema.prisma",
+    "db:generate": "dotenv -e ../../.env -- prisma generate --schema=./prisma/schema.prisma",
+    "db:migrate": "dotenv -e ../../.env -- prisma migrate dev --schema=./prisma/schema.prisma",
+    "db:migrate:deploy": "dotenv -e ../../.env -- prisma migrate deploy --schema=./prisma/schema.prisma",
+    "db:push": "dotenv -e ../../.env -- prisma db push --schema=./prisma/schema.prisma --accept-data-loss",
     "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "dotenv -e ../../.env -- prisma studio --schema=./prisma/schema.prisma",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
+    "dotenv": "^17.2.3",
     "pino": "^8.17.0"
   },
   "devDependencies": {
+    "dotenv-cli": "^7.4.2",
     "prisma": "^5.7.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"

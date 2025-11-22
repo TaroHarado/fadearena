@@ -226,8 +226,9 @@ export interface HyperliquidOrderRequest {
           tpsl: "tp" | "sl";
         };
       };
+      c?: string; // Optional: 128-bit hex string (0x...)
     }>;
-    grouping: "na";
+    grouping: "na" | "normalTpsl" | "positionTpsl";
   };
   nonce: number; // timestamp ms
   signature: {
@@ -235,7 +236,8 @@ export interface HyperliquidOrderRequest {
     s: string;
     v: number;
   };
-  vaultAddress?: string;
+  vaultAddress?: string | null; // Optional
+  expiresAfter?: number | null; // Optional: timestamp ms
 }
 
 export interface HyperliquidOrderResponse {
@@ -462,11 +464,15 @@ export interface ModelResponse {
     id: string;
     name: string;
     walletAddress: string;
+    faderWalletAddress?: string;
     enabled: boolean;
     leverageMultiplier: number;
     mirrorAccount: MirrorAccountInfo | null;
     currentPositions: Position[];
     myMirroredPositions: Position[];
+    // Current open positions from Hyperliquid (real-time)
+    currentOpenPositions?: number;
+    currentUnrealizedPnL?: number;
     stats: {
       totalTrades: number;
       winRate: number;
@@ -583,3 +589,45 @@ export const BOT_IDS = [
 ] as const;
 
 export type BotId = typeof BOT_IDS[number];
+
+// ============================================================================
+// Fader Equity Types
+// ============================================================================
+
+export interface FaderEquityPoint {
+  label: string;      // 'GEMINI', 'GROK', ...
+  address: string;    // 0x...
+  equityUsd: number;  // accountValue или totalRawUsd
+}
+
+export interface FaderEquityResponse {
+  timestamp: number;            // Date.now()
+  wallets: FaderEquityPoint[];
+}
+
+export interface FaderEquityHistoryPoint {
+  timestamp: number; // ms
+  wallets: FaderEquityPoint[];
+}
+
+export interface FaderEquityHistoryResponse {
+  from: number;
+  to: number;
+  points: FaderEquityHistoryPoint[];
+}
+
+// ============================================================================
+// Market Prices Types
+// ============================================================================
+
+export interface AssetPrice {
+  ticker: string; // Display ticker (TSLA, NDX, etc.)
+  symbol: string; // Hyperliquid symbol (TSLA, XYZ100, etc.)
+  price: number;
+  timestamp: number;
+}
+
+export interface AssetPricesResponse {
+  timestamp: number;
+  prices: AssetPrice[];
+}

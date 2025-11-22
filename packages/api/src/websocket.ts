@@ -17,13 +17,24 @@ import type {
 const logger = pino({ name: 'WebSocket' });
 
 export class WSServer {
-  private wss: WebSocketServer;
+  private wss: WebSocketServer | null = null;
   private clients: Set<WebSocket> = new Set();
 
   constructor(port: number) {
-    this.wss = new WebSocketServer({ port, path: '/ws' });
+    try {
+      this.wss = new WebSocketServer({ port, path: '/ws' });
 
-    this.wss.on('connection', (ws: WebSocket) => {
+      // Обработка ошибки при занятом порте
+      this.wss.on('error', (error: Error & { code?: string }) => {
+        if (error.code === 'EADDRINUSE') {
+          logger.warn({ port, error: error.message }, 'WebSocket port already in use, server will continue without WebSocket');
+          this.wss = null;
+          return;
+        }
+        logger.error({ error }, 'WebSocket server error');
+      });
+
+      this.wss.on('connection', (ws: WebSocket) => {
       this.clients.add(ws);
       logger.info({ clientCount: this.clients.size }, 'WebSocket client connected');
 
@@ -47,13 +58,23 @@ export class WSServer {
       });
     });
 
-    logger.info({ port }, 'WebSocket server started');
+      if (this.wss) {
+        logger.info({ port }, 'WebSocket server started');
+      }
+    } catch (error: any) {
+      logger.warn({ port, error: error?.message }, 'Failed to create WebSocket server, continuing without it');
+      this.wss = null;
+    }
   }
 
   /**
    * Broadcast message to all connected clients
    */
   broadcast(message: WebSocketMessage): void {
+    if (!this.wss) {
+      return; // WebSocket не запущен
+    }
+
     const data = JSON.stringify(message);
     let sent = 0;
 
@@ -156,8 +177,10 @@ export class WSServer {
    * Close WebSocket server
    */
   close(): void {
-    this.wss.close();
-    logger.info('WebSocket server closed');
+    if (this.wss) {
+      this.wss.close();
+      logger.info('WebSocket server closed');
+    }
   }
 }
 

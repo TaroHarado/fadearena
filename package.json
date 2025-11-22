@@ -13,11 +13,16 @@
     "db:migrate": "pnpm --filter @fadearena/shared db:migrate",
     "db:migrate:deploy": "pnpm --filter @fadearena/shared db:migrate:deploy",
     "db:seed": "pnpm --filter @fadearena/shared db:seed",
+    "db:studio": "pnpm --filter @fadearena/shared db:studio",
     "db:reset": "pnpm --filter @fadearena/shared exec prisma migrate reset --schema=./prisma/schema.prisma --force",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test:hyperliquid": "tsx scripts/testHyperliquid.ts",
-    "debug:hyperliquid": "tsx scripts/rawHyperliquid.ts"
+    "debug:hyperliquid": "tsx scripts/rawHyperliquid.ts",
+    "check:trading": "tsx scripts/checkTradingStatus.ts",
+    "test:meta": "tsx scripts/testMeta.ts",
+    "test:stock-perps": "tsx scripts/testHyperliquidStockPerps.ts",
+    "test:stock-perp-positions": "tsx scripts/testStockPerpPositions.ts"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
