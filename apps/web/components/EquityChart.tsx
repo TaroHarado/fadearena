@@ -11,7 +11,12 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { useEquity } from '@/hooks/useEquity'
-import type { EquityResponse } from '@fadearena/shared'
+
+interface EquityPoint {
+  timestamp: number
+  botsAggregate: number
+  fadeArena: number
+}
 
 export function EquityChart() {
   const { data } = useEquity()
@@ -25,7 +30,7 @@ export function EquityChart() {
   }
 
   // Format data for Recharts
-  const chartData = data.series.map((point: EquityResponse['series'][0]) => ({
+  const chartData = data.series.map((point: EquityPoint) => ({
     time: new Date(point.timestamp).toLocaleTimeString(),
     bots: point.botsAggregate,
     fadeArena: point.fadeArena,
