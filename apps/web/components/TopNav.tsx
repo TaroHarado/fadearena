@@ -2,10 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useSystemState } from '@/hooks/useSystemState'
-
 export function TopNav() {
-  const { data: state } = useSystemState()
+  // Статическое состояние (без API)
+  const state = {
+    mode: 'live' as 'simulation' | 'live',
+    killSwitch: false,
+  }
 
   return (
     <nav className="border-b border-terminal-border bg-terminal-surface">

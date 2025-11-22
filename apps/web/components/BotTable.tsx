@@ -1,6 +1,12 @@
 'use client'
 
-import { useModels } from '@/hooks/useModels'
+import { STATIC_POSITIONS } from '@/data/staticData'
+
+// Получаем адреса из позиций
+const getWalletAddress = (label: string) => {
+  const wallet = STATIC_POSITIONS.find(w => w.label === label);
+  return wallet?.address || '0x0000...0000';
+};
 
 // Simple external link icon component
 function ExternalLinkIcon({ size = 14 }: { size?: number }) {
@@ -22,8 +28,102 @@ function ExternalLinkIcon({ size = 14 }: { size?: number }) {
   )
 }
 
+// Статические данные для ботов (адреса из STATIC_POSITIONS)
+const STATIC_BOTS = [
+  {
+    id: 'gemini-3-pro',
+    name: 'gemini-3-pro',
+    walletAddress: getWalletAddress('GEMINI'),
+    faderWalletAddress: getWalletAddress('GEMINI'),
+    stats: {
+      totalPnL: 0,
+      dailyPnL: 0,
+      totalTrades: 0,
+      winRate: 0.0,
+    },
+    currentOpenPositions: STATIC_POSITIONS[0].positions.length,
+    currentUnrealizedPnL: STATIC_POSITIONS[0].totalUnrealizedPnl,
+    enabled: true,
+  },
+  {
+    id: 'grok-4',
+    name: 'grok-4',
+    walletAddress: getWalletAddress('GROK'),
+    faderWalletAddress: getWalletAddress('GROK'),
+    stats: {
+      totalPnL: 0,
+      dailyPnL: 0,
+      totalTrades: 0,
+      winRate: 0.0,
+    },
+    currentOpenPositions: STATIC_POSITIONS[1].positions.length,
+    currentUnrealizedPnL: STATIC_POSITIONS[1].totalUnrealizedPnl,
+    enabled: true,
+  },
+  {
+    id: 'qwen3-max',
+    name: 'qwen3-max',
+    walletAddress: getWalletAddress('QWEN'),
+    faderWalletAddress: getWalletAddress('QWEN'),
+    stats: {
+      totalPnL: 0,
+      dailyPnL: 0,
+      totalTrades: 0,
+      winRate: 0.0,
+    },
+    currentOpenPositions: STATIC_POSITIONS[2].positions.length,
+    currentUnrealizedPnL: STATIC_POSITIONS[2].totalUnrealizedPnl,
+    enabled: true,
+  },
+  {
+    id: 'kimi-k2-thinking',
+    name: 'kimi-k2-thinking',
+    walletAddress: getWalletAddress('KIMI'),
+    faderWalletAddress: getWalletAddress('KIMI'),
+    stats: {
+      totalPnL: 0,
+      dailyPnL: 0,
+      totalTrades: 0,
+      winRate: 0.0,
+    },
+    currentOpenPositions: STATIC_POSITIONS[3].positions.length,
+    currentUnrealizedPnL: STATIC_POSITIONS[3].totalUnrealizedPnl,
+    enabled: true,
+  },
+  {
+    id: 'deepseek-chat-v3.1',
+    name: 'deepseek-chat-v3.1',
+    walletAddress: getWalletAddress('DEEPSEEK'),
+    faderWalletAddress: getWalletAddress('DEEPSEEK'),
+    stats: {
+      totalPnL: 0,
+      dailyPnL: 0,
+      totalTrades: 0,
+      winRate: 0.0,
+    },
+    currentOpenPositions: STATIC_POSITIONS[4].positions.length,
+    currentUnrealizedPnL: STATIC_POSITIONS[4].totalUnrealizedPnl,
+    enabled: true,
+  },
+  {
+    id: 'claude-sonnet',
+    name: 'claude-sonnet',
+    walletAddress: getWalletAddress('CLAUDE'),
+    faderWalletAddress: getWalletAddress('CLAUDE'),
+    stats: {
+      totalPnL: 0,
+      dailyPnL: 0,
+      totalTrades: 0,
+      winRate: 0.0,
+    },
+    currentOpenPositions: 4,
+    currentUnrealizedPnL: -8.69,
+    enabled: true,
+  },
+];
+
 export function BotTable() {
-  const { data } = useModels()
+  const data = { bots: STATIC_BOTS };
 
   if (!data || data.bots.length === 0) {
     return (
@@ -35,9 +135,7 @@ export function BotTable() {
 
   // Calculate Sharpe-like metric (simplified: win rate * avg PnL)
   const calculateMetric = (bot: typeof data.bots[0]) => {
-    if (bot.stats.totalTrades === 0) return 0
-    const avgPnL = bot.stats.totalPnL / bot.stats.totalTrades
-    return bot.stats.winRate * avgPnL
+    return 0.0 // Статическое значение
   }
 
   return (
@@ -129,7 +227,7 @@ export function BotTable() {
                       bot.stats.dailyPnL >= 0 ? 'pnl-positive' : 'pnl-negative'
                     }`}
                   >
-                    ${bot.stats.dailyPnL.toLocaleString(2)}
+                    ${bot.stats.dailyPnL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                   <td className="py-3 px-3 text-right number">
                     {(bot.stats.winRate * 100).toFixed(1)}%

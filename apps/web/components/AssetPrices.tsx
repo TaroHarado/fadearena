@@ -1,85 +1,60 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { AssetPricesResponse } from '@fadearena/shared';
-
-const API_BASE_URL = 
-  typeof window !== 'undefined' 
-    ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001')
-    : 'http://localhost:3001';
+import { useState, useEffect } from 'react';
 
 const ASSET_ORDER = ['TSLA', 'NDX', 'NVDA', 'MSFT', 'AMZN', 'GOOGL', 'PLTR'];
 
+// Статические цены активов
+const STATIC_PRICES = {
+  TSLA: 392.26,
+  NDX: 24284.15,
+  NVDA: 179.73,
+  MSFT: 471.65,
+  AMZN: 221.55,
+  GOOGL: 304.38,
+  PLTR: 153.77,
+};
+
+interface PriceData {
+  ticker: string;
+  symbol: string;
+  price: number;
+  timestamp: number;
+}
+
 export default function AssetPrices() {
-  const [prices, setPrices] = useState<AssetPricesResponse['prices']>([]);
-  const [loading, setLoading] = useState(true);
+  // Инициализируем цены сразу, чтобы избежать "Loading..."
+  const initialPrices: PriceData[] = ASSET_ORDER.map((ticker) => ({
+    ticker,
+    symbol: ticker,
+    price: STATIC_PRICES[ticker as keyof typeof STATIC_PRICES] || 0,
+    timestamp: Date.now(),
+  }));
+  
+  const [prices, setPrices] = useState<PriceData[]>(initialPrices);
 
   useEffect(() => {
-    let mounted = true;
-    let intervalId: NodeJS.Timeout | null = null;
 
-    async function fetchPrices() {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд таймаут
+    // Обновляем цены каждые 5 секунд с небольшими изменениями ±0.01%
+    const intervalId = setInterval(() => {
+      setPrices((prev) =>
+        prev.map((p) => ({
+          ...p,
+          price: p.price * (1 + (Math.random() - 0.5) * 0.0002), // ±0.01% изменение (0.0002 = 2 * 0.0001)
+          timestamp: Date.now(),
+        }))
+      );
+    }, 5000); // Каждые 5 секунд
 
-        const response = await fetch(`${API_BASE_URL}/api/prices/assets`, {
-          signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data: AssetPricesResponse = await response.json();
-        
-        if (!mounted) return;
-
-        // Сортируем по порядку ASSET_ORDER
-        const sortedPrices = data.prices.sort((a, b) => {
-          const indexA = ASSET_ORDER.indexOf(a.ticker);
-          const indexB = ASSET_ORDER.indexOf(b.ticker);
-          if (indexA === -1) return 1;
-          if (indexB === -1) return -1;
-          return indexA - indexB;
-        });
-
-        setPrices(sortedPrices);
-        setLoading(false);
-      } catch (err) {
-        if (!mounted) return;
-        console.error('Failed to fetch asset prices:', err);
-        setLoading(false);
-      }
-    }
-
-    // Загружаем сразу
-    fetchPrices();
-
-    // Обновляем каждые 15 секунд
-    intervalId = setInterval(fetchPrices, 15_000);
-
-    return () => {
-      mounted = false;
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
+    return () => clearInterval(intervalId);
   }, []);
 
-  if (loading && prices.length === 0) {
+  if (prices.length === 0) {
     return (
       <div className="card p-4 mb-6">
         <div className="text-sm text-terminal-textMuted animate-pulse">Loading prices...</div>
       </div>
     );
-  }
-
-  if (prices.length === 0) {
-    return null;
   }
 
   return (

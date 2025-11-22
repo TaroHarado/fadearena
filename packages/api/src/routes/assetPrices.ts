@@ -47,7 +47,7 @@ async function getAssetPrices(): Promise<AssetPricesResponse['prices']> {
           continue;
         }
 
-        const l2Book = await response.json();
+        const l2Book: any = await response.json();
         
         // l2Book возвращает { levels: [[{px, sz}, ...], [{px, sz}, ...]] }
         // levels[0] - массив bids (цены покупки, отсортированы по убыванию)

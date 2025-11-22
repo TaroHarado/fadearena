@@ -107,6 +107,25 @@ async function main() {
   app.use(express.json());
   app.use(pinoHttp({ logger }));
 
+  // Root route - для проверки что API работает
+  app.get('/', (req, res) => {
+    res.json({
+      service: 'FadeArena API',
+      status: 'running',
+      version: '1.0.0',
+      endpoints: {
+        health: '/api/health',
+        models: '/api/models',
+        state: '/api/state',
+        trades: '/api/trades',
+        equity: '/api/equity',
+        faderEquity: '/api/fader-equity',
+        positions: '/api/positions',
+      },
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   // Routes
   logger.info('Registering routes...');
   try {

@@ -54,7 +54,7 @@ export function EquityChart() {
               borderRadius: '2px',
               fontSize: '12px',
             }}
-            formatter={(value: number) => `$${value.toLocaleString(2)}`}
+            formatter={(value: number) => `$${value.toFixed(2)}`}
           />
           <Legend
             wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}

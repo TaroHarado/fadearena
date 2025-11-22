@@ -1,30 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-interface Position {
-  asset: string;
-  side: 'LONG' | 'SHORT';
-  size: number;
-  entryPrice: number;
-  markPrice: number;
-  notional: number;
-  unrealizedPnl: number;
-  leverage: number;
-}
-
-interface WalletPositions {
-  label: string;
-  address: string;
-  positions: Position[];
-  totalNotional: number;
-  totalUnrealizedPnl: number;
-}
-
-interface PositionsResponse {
-  timestamp: number;
-  wallets: WalletPositions[];
-}
+import { useState, useEffect } from 'react';
+import { STATIC_POSITIONS, type WalletPositions } from '@/data/staticData';
 
 const FADER_COLORS: Record<string, string> = {
   GEMINI: '#8b5cf6',
@@ -36,62 +13,10 @@ const FADER_COLORS: Record<string, string> = {
 };
 
 export default function PositionsSidebar() {
-  const [positions, setPositions] = useState<PositionsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPositions = async () => {
-      try {
-        const apiUrl = typeof window !== 'undefined'
-          ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001')
-          : 'http://localhost:3001';
-        
-        const response = await fetch(`${apiUrl}/api/positions/faders`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data: PositionsResponse = await response.json();
-        setPositions(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch positions');
-        console.error('Error fetching positions:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPositions();
-    const interval = setInterval(fetchPositions, 15000); // Обновляем каждые 15 секунд
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="card p-4 w-80">
-        <h3 className="text-lg font-bold mb-4 font-mono">Active Positions</h3>
-        <div className="text-terminal-textMuted text-sm animate-pulse">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="card p-4 w-80">
-        <h3 className="text-lg font-bold mb-4 font-mono">Active Positions</h3>
-        <div className="text-red-500 text-sm">⚠️ {error}</div>
-      </div>
-    );
-  }
+  const [positions] = useState<{ timestamp: number; wallets: WalletPositions[] }>({
+    timestamp: Date.now(),
+    wallets: STATIC_POSITIONS,
+  });
 
   if (!positions || positions.wallets.length === 0) {
     return (
@@ -183,7 +108,7 @@ export default function PositionsSidebar() {
                       <div className="mt-1.5 pt-1.5 border-t border-terminal-border flex items-center justify-between">
                         <span className="text-terminal-textMuted text-xs">Notional:</span>
                         <span className="font-mono font-semibold text-xs">
-                          ${pos.notional.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ${pos.notional.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
 
@@ -194,7 +119,7 @@ export default function PositionsSidebar() {
                           style={{ color: posPnlColor }}
                         >
                           {pos.unrealizedPnl >= 0 ? '+' : ''}
-                          ${pos.unrealizedPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ${pos.unrealizedPnl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
                     </div>
@@ -210,7 +135,7 @@ export default function PositionsSidebar() {
                     style={{ color: pnlColor }}
                   >
                     {wallet.totalUnrealizedPnl >= 0 ? '+' : ''}
-                    ${wallet.totalUnrealizedPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${wallet.totalUnrealizedPnl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
               )}

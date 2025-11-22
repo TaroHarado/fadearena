@@ -37,7 +37,7 @@ async function getAccountValue(address: string, retries: number = 3): Promise<nu
         throw new Error(`HTTP ${defaultResponse.status}: ${defaultResponse.statusText}`);
       }
 
-      const data = await defaultResponse.json();
+      const data: any = await defaultResponse.json();
       
       // Получаем данные из xyz DEX (для stock perps)
       let xyzData: any = null;

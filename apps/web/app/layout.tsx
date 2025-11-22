@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'FadeArena - Inverse the AI Traders',
   description: 'Contrarian trading bot on Hyperliquid that automatically opens inverse positions to AI trading wallets',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/logo.png',
   },
 }
 

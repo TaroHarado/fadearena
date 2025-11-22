@@ -55,7 +55,7 @@ export async function getUserPositions(address: string): Promise<Position[]> {
     });
 
     if (defaultResponse.ok) {
-      const defaultData = await defaultResponse.json();
+      const defaultData: any = await defaultResponse.json();
       if (defaultData.assetPositions) {
         for (const assetPos of defaultData.assetPositions) {
           if (assetPos.position) {
@@ -105,7 +105,7 @@ export async function getUserPositions(address: string): Promise<Position[]> {
     });
 
     if (xyzResponse.ok) {
-      const xyzData = await xyzResponse.json();
+      const xyzData: any = await xyzResponse.json();
       if (xyzData.assetPositions) {
         for (const assetPos of xyzData.assetPositions) {
           if (assetPos.position) {
