@@ -8,7 +8,9 @@ dist/
 build/
 *.tsbuildinfo
 .next/
+.next/**
 out/
+*.log
 
 # Environment
 .env
