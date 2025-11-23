@@ -125,7 +125,7 @@ export function BotTable() {
   if (!data || data.bots.length === 0) {
     return (
       <div className="card-arena">
-        <div className="text-arena-textMuted text-sm">No bot data available</div>
+        <div style={{ color: '#888888', fontSize: '0.875rem' }}>No bot data available</div>
       </div>
     )
   }
@@ -136,36 +136,36 @@ export function BotTable() {
 
   return (
     <div className="card-arena">
-      <h2 className="text-xl font-bold mb-4 text-arena-text">AI Models Leaderboard</h2>
+      <h2 className="text-xl font-bold mb-4" style={{ color: '#ffffff' }}>Bot Wallet Positions</h2>
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full" style={{ borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="border-b border-arena-border">
-              <th className="text-left py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
-                Model
+            <tr style={{ borderBottom: '1px solid #2a2a2a' }}>
+              <th className="text-left py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+                Bot
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Wallet
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Positions
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Unrealized PnL
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Total PnL
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Daily PnL
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Win Rate
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
-                Score
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+                Metric
               </th>
-              <th className="text-center py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
+              <th className="text-center py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
                 Status
               </th>
             </tr>
@@ -174,30 +174,40 @@ export function BotTable() {
             {data.bots.map((bot) => {
               const metric = calculateMetric(bot)
               const totalPnL = bot.stats.totalPnL + (bot.currentUnrealizedPnL ?? 0)
+              const walletAddress = bot.faderWalletAddress || bot.walletAddress
               
               return (
                 <tr
                   key={bot.id}
-                  className="border-b border-arena-border hover:bg-arena-surface/50 transition-colors"
+                  style={{ borderBottom: '1px solid #2a2a2a' }}
+                  className="hover:bg-arena-surface/50 transition-colors"
                 >
-                  <td className="py-3 px-4 font-semibold text-arena-text">{bot.name}</td>
+                  <td className="py-3 px-4 font-semibold" style={{ color: '#ffffff' }}>{bot.name}</td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <span className="font-mono text-xs text-arena-textMuted">
-                        {(bot.faderWalletAddress || bot.walletAddress).slice(0, 6)}...{(bot.faderWalletAddress || bot.walletAddress).slice(-4)}
-                      </span>
                       <a
-                        href={`https://app.hyperliquid.xyz/explorer/address/${bot.faderWalletAddress || bot.walletAddress}`}
+                        href={`https://app.hyperliquid.xyz/explorer/address/${walletAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-arena-textMuted hover:text-arena-blue transition-colors"
+                        className="font-mono text-xs hover:text-arena-blue transition-colors"
+                        style={{ color: '#888888' }}
+                        title="View on Hyperliquid"
+                      >
+                        {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                      </a>
+                      <a
+                        href={`https://app.hyperliquid.xyz/explorer/address/${walletAddress}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-arena-blue transition-colors"
+                        style={{ color: '#888888' }}
                         title="View on Hyperliquid"
                       >
                         <ExternalLinkIcon size={14} />
                       </a>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-right font-semibold text-arena-text">
+                  <td className="py-3 px-4 text-right font-semibold" style={{ color: '#ffffff' }}>
                     {bot.currentOpenPositions ?? 0}
                   </td>
                   <td className={`py-3 px-4 text-right font-semibold ${
@@ -221,10 +231,10 @@ export function BotTable() {
                   }`}>
                     ${bot.stats.dailyPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="py-3 px-4 text-right font-semibold text-arena-text">
+                  <td className="py-3 px-4 text-right font-semibold" style={{ color: '#ffffff' }}>
                     {(bot.stats.winRate * 100).toFixed(1)}%
                   </td>
-                  <td className="py-3 px-4 text-right font-semibold text-arena-text">
+                  <td className="py-3 px-4 text-right font-semibold" style={{ color: '#ffffff' }}>
                     {metric.toFixed(2)}
                   </td>
                   <td className="py-3 px-4 text-center">
@@ -233,7 +243,7 @@ export function BotTable() {
                         bot.enabled ? 'pill-arena-success' : 'pill-arena-danger'
                       }`}
                     >
-                      {bot.enabled ? 'Active' : 'Disabled'}
+                      {bot.enabled ? 'Enabled' : 'Disabled'}
                     </span>
                   </td>
                 </tr>

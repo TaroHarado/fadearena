@@ -42,84 +42,68 @@ type ChartDataPoint = {
   CLAUDE: number | null
 }
 
-function generateInitialChartData(): ChartDataPoint[] {
-  const now = Date.now()
-  const today = new Date()
-  const currentHour = today.getHours()
-  
-  let startDate = new Date(today)
-  if (currentHour < 21) {
-    startDate.setDate(startDate.getDate() - 1)
-  }
-  startDate.setHours(21, 0, 0, 0)
-  const startTime = startDate.getTime()
-  
-  const initialData: ChartDataPoint[] = []
-  const variation = 0.0001
-  const currentValues: Record<string, number> = { ...BASE_VALUES }
-  
-  let seed = Math.floor(startTime / 1000)
-  const seededRandom = () => {
-    seed = (seed * 9301 + 49297) % 233280
-    return seed / 233280
-  }
-  
-  // Генерируем точки каждые 5 минут
-  for (let t = startTime; t <= now; t += 5 * 60 * 1000) {
-    const point: ChartDataPoint = {
-      time: t,
-      timeFormatted: new Date(t).toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      GEMINI: null,
-      GROK: null,
-      QWEN: null,
-      KIMI: null,
-      DEEPSEEK: null,
-      CLAUDE: null,
-    }
-    
-    for (const label of FADER_LABELS) {
-      const change = (seededRandom() - 0.5) * 2 * variation
-      currentValues[label] = currentValues[label] * (1 + change)
-      ;(point as any)[label] = currentValues[label]
-    }
-    
-    initialData.push(point)
-  }
-  
-  return initialData
-}
-
 export default function FaderEquityChart() {
-  const [chartData, setChartData] = useState<ChartDataPoint[]>(() => {
-    // Генерируем данные сразу при инициализации
-    if (typeof window !== 'undefined') {
-      return generateInitialChartData()
-    }
-    return []
-  })
-  const [currentValues, setCurrentValues] = useState<Record<string, number>>(() => {
-    if (chartData.length > 0) {
-      const lastPoint = chartData[chartData.length - 1]
-      return {
-        GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
-        GROK: lastPoint.GROK || BASE_VALUES.GROK,
-        QWEN: lastPoint.QWEN || BASE_VALUES.QWEN,
-        KIMI: lastPoint.KIMI || BASE_VALUES.KIMI,
-        DEEPSEEK: lastPoint.DEEPSEEK || BASE_VALUES.DEEPSEEK,
-        CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
-      }
-    }
-    return { ...BASE_VALUES }
-  })
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([])
+  const [currentValues, setCurrentValues] = useState<Record<string, number>>({ ...BASE_VALUES })
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    // Обновляем currentValues после монтирования
-    if (chartData.length > 0) {
-      const lastPoint = chartData[chartData.length - 1]
+    // Генерируем начальные данные
+    const generateInitialData = () => {
+      const now = Date.now()
+      const today = new Date()
+      const currentHour = today.getHours()
+      
+      let startDate = new Date(today)
+      if (currentHour < 21) {
+        startDate.setDate(startDate.getDate() - 1)
+      }
+      startDate.setHours(21, 0, 0, 0)
+      const startTime = startDate.getTime()
+      
+      const initialData: ChartDataPoint[] = []
+      const variation = 0.0001
+      const values: Record<string, number> = { ...BASE_VALUES }
+      
+      let seed = Math.floor(startTime / 1000)
+      const seededRandom = () => {
+        seed = (seed * 9301 + 49297) % 233280
+        return seed / 233280
+      }
+      
+      // Генерируем точки каждые 5 минут
+      for (let t = startTime; t <= now; t += 5 * 60 * 1000) {
+        const point: ChartDataPoint = {
+          time: t,
+          timeFormatted: new Date(t).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          GEMINI: null,
+          GROK: null,
+          QWEN: null,
+          KIMI: null,
+          DEEPSEEK: null,
+          CLAUDE: null,
+        }
+        
+        for (const label of FADER_LABELS) {
+          const change = (seededRandom() - 0.5) * 2 * variation
+          values[label] = values[label] * (1 + change)
+          ;(point as any)[label] = values[label]
+        }
+        
+        initialData.push(point)
+      }
+      
+      return initialData
+    }
+
+    const initialData = generateInitialData()
+    setChartData(initialData)
+    
+    if (initialData.length > 0) {
+      const lastPoint = initialData[initialData.length - 1]
       setCurrentValues({
         GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
         GROK: lastPoint.GROK || BASE_VALUES.GROK,
@@ -129,10 +113,9 @@ export default function FaderEquityChart() {
         CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
       })
     }
-  }, [chartData])
 
-  useEffect(() => {
-    const updateChart = () => {
+    // Обновляем каждые 10 секунд
+    intervalRef.current = setInterval(() => {
       setCurrentValues((prev) => {
         const newValues: Record<string, number> = {}
         const variation = 0.0001
@@ -167,9 +150,7 @@ export default function FaderEquityChart() {
         
         return newValues
       })
-    }
-
-    intervalRef.current = setInterval(updateChart, 10000)
+    }, 10000)
 
     return () => {
       if (intervalRef.current) {
@@ -205,17 +186,17 @@ export default function FaderEquityChart() {
   if (chartData.length === 0) {
     return (
       <div className="card-arena">
-        <h3 className="text-lg font-bold mb-4 text-arena-text">Model Performance</h3>
-        <div className="text-arena-textMuted text-sm">Loading chart...</div>
+        <h3 className="text-lg font-bold mb-4" style={{ color: '#ffffff' }}>Model Performance</h3>
+        <div style={{ color: '#888888', fontSize: '0.875rem' }}>Loading chart...</div>
       </div>
     )
   }
 
   return (
     <div className="card-arena">
-      <h3 className="text-lg font-bold mb-4 text-arena-text">Model Performance</h3>
+      <h3 className="text-lg font-bold mb-4" style={{ color: '#ffffff' }}>Model Performance</h3>
       <div style={{ width: '100%', height: '400px' }}>
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" opacity={0.3} />
             <XAxis
