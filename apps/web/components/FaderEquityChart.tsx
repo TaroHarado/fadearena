@@ -42,78 +42,81 @@ type ChartDataPoint = {
   CLAUDE: number | null
 }
 
-export default function FaderEquityChart() {
-  const [chartData, setChartData] = useState<ChartDataPoint[]>([])
-  const [currentValues, setCurrentValues] = useState<Record<string, number>>({ ...BASE_VALUES })
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
-  useEffect(() => {
-    // Генерируем начальные данные
-    const generateInitialData = () => {
-      const now = Date.now()
-      const today = new Date()
-      const currentHour = today.getHours()
-      
-      let startDate = new Date(today)
-      if (currentHour < 21) {
-        startDate.setDate(startDate.getDate() - 1)
-      }
-      startDate.setHours(21, 0, 0, 0)
-      const startTime = startDate.getTime()
-      
-      const initialData: ChartDataPoint[] = []
-      const variation = 0.0001
-      const values: Record<string, number> = { ...BASE_VALUES }
-      
-      let seed = Math.floor(startTime / 1000)
-      const seededRandom = () => {
-        seed = (seed * 9301 + 49297) % 233280
-        return seed / 233280
-      }
-      
-      // Генерируем точки каждые 5 минут
-      for (let t = startTime; t <= now; t += 5 * 60 * 1000) {
-        const point: ChartDataPoint = {
-          time: t,
-          timeFormatted: new Date(t).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-          GEMINI: null,
-          GROK: null,
-          QWEN: null,
-          KIMI: null,
-          DEEPSEEK: null,
-          CLAUDE: null,
-        }
-        
-        for (const label of FADER_LABELS) {
-          const change = (seededRandom() - 0.5) * 2 * variation
-          values[label] = values[label] * (1 + change)
-          ;(point as any)[label] = values[label]
-        }
-        
-        initialData.push(point)
-      }
-      
-      return initialData
+function generateInitialChartData(): ChartDataPoint[] {
+  const now = Date.now()
+  const today = new Date()
+  const currentHour = today.getHours()
+  
+  let startDate = new Date(today)
+  if (currentHour < 21) {
+    startDate.setDate(startDate.getDate() - 1)
+  }
+  startDate.setHours(21, 0, 0, 0)
+  const startTime = startDate.getTime()
+  
+  const initialData: ChartDataPoint[] = []
+  const variation = 0.0001
+  const values: Record<string, number> = { ...BASE_VALUES }
+  
+  let seed = Math.floor(startTime / 1000)
+  const seededRandom = () => {
+    seed = (seed * 9301 + 49297) % 233280
+    return seed / 233280
+  }
+  
+  // Генерируем точки каждые 5 минут
+  for (let t = startTime; t <= now; t += 5 * 60 * 1000) {
+    const point: ChartDataPoint = {
+      time: t,
+      timeFormatted: new Date(t).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      GEMINI: null,
+      GROK: null,
+      QWEN: null,
+      KIMI: null,
+      DEEPSEEK: null,
+      CLAUDE: null,
     }
-
-    const initialData = generateInitialData()
-    setChartData(initialData)
     
-    if (initialData.length > 0) {
-      const lastPoint = initialData[initialData.length - 1]
-      setCurrentValues({
+    for (const label of FADER_LABELS) {
+      const change = (seededRandom() - 0.5) * 2 * variation
+      values[label] = values[label] * (1 + change)
+      ;(point as any)[label] = values[label]
+    }
+    
+    initialData.push(point)
+  }
+  
+  return initialData
+}
+
+export default function FaderEquityChart() {
+  // Генерируем данные сразу при инициализации
+  const [chartData, setChartData] = useState<ChartDataPoint[]>(() => {
+    if (typeof window !== 'undefined') {
+      return generateInitialChartData()
+    }
+    return []
+  })
+  const [currentValues, setCurrentValues] = useState<Record<string, number>>(() => {
+    if (chartData.length > 0) {
+      const lastPoint = chartData[chartData.length - 1]
+      return {
         GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
         GROK: lastPoint.GROK || BASE_VALUES.GROK,
         QWEN: lastPoint.QWEN || BASE_VALUES.QWEN,
         KIMI: lastPoint.KIMI || BASE_VALUES.KIMI,
         DEEPSEEK: lastPoint.DEEPSEEK || BASE_VALUES.DEEPSEEK,
         CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
-      })
+      }
     }
+    return { ...BASE_VALUES }
+  })
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
+  useEffect(() => {
     // Обновляем каждые 10 секунд
     intervalRef.current = setInterval(() => {
       setCurrentValues((prev) => {

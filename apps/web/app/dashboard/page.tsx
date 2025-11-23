@@ -20,6 +20,7 @@ export default function DashboardPage() {
                 ? 'text-arena-text border-b-2 border-arena-blue'
                 : 'text-arena-textMuted hover:text-arena-text'
             }`}
+            style={activeTab === 'live' ? { color: '#ffffff', borderBottomColor: '#00d4ff' } : { color: '#888888' }}
           >
             Live Trades
           </button>
@@ -30,6 +31,7 @@ export default function DashboardPage() {
                 ? 'text-arena-text border-b-2 border-arena-blue'
                 : 'text-arena-textMuted hover:text-arena-text'
             }`}
+            style={activeTab === 'models' ? { color: '#ffffff', borderBottomColor: '#00d4ff' } : { color: '#888888' }}
           >
             Models
           </button>
