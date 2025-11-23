@@ -3,14 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-arena-border;
-  }
-  
   body {
-    @apply bg-arena-bg text-arena-text font-sans antialiased;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
   
   html {
@@ -37,53 +36,116 @@
 
 @layer components {
   .card-arena {
-    @apply bg-arena-surface border border-arena-border rounded-lg p-6
-           transition-all duration-200 hover:border-arena-blue/50;
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+  }
+  
+  .card-arena:hover {
+    border-color: rgba(0, 212, 255, 0.5);
   }
   
   .btn-arena {
-    @apply px-6 py-3 rounded-lg font-semibold text-sm
-           transition-all duration-200 hover:scale-105 active:scale-95;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-arena:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-arena:active {
+    transform: scale(0.95);
   }
   
   .btn-arena-primary {
-    @apply bg-arena-blue text-white hover:bg-arena-blue/90;
+    background-color: #00d4ff;
+    color: #ffffff;
+  }
+  
+  .btn-arena-primary:hover {
+    background-color: rgba(0, 212, 255, 0.9);
   }
   
   .btn-arena-secondary {
-    @apply bg-arena-surface border border-arena-border text-arena-text
-           hover:border-arena-blue hover:text-arena-blue;
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #ffffff;
+  }
+  
+  .btn-arena-secondary:hover {
+    border-color: #00d4ff;
+    color: #00d4ff;
   }
   
   .input-arena {
-    @apply w-full px-4 py-3 bg-arena-surface border border-arena-border rounded-lg
-           text-arena-text placeholder-arena-textDim focus:outline-none
-           focus:border-arena-blue transition-all duration-200;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    transition: all 0.2s;
+  }
+  
+  .input-arena::placeholder {
+    color: #555555;
+  }
+  
+  .input-arena:focus {
+    outline: none;
+    border-color: #00d4ff;
   }
   
   .label-arena {
-    @apply text-xs uppercase tracking-wider text-arena-textMuted font-semibold mb-2 block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888888;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
   }
   
   .pnl-positive {
-    @apply text-arena-green font-semibold;
+    color: #00ff88;
+    font-weight: 600;
   }
   
   .pnl-negative {
-    @apply text-arena-red font-semibold;
+    color: #ff3366;
+    font-weight: 600;
   }
   
   .pill-arena {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-           border border-arena-border;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #2a2a2a;
   }
   
   .pill-arena-success {
-    @apply border-arena-green text-arena-green bg-arena-green/10;
+    border-color: #00ff88;
+    color: #00ff88;
+    background-color: rgba(0, 255, 136, 0.1);
   }
   
   .pill-arena-danger {
-    @apply border-arena-red text-arena-red bg-arena-red/10;
+    border-color: #ff3366;
+    color: #ff3366;
+    background-color: rgba(255, 51, 102, 0.1);
   }
 }
 
@@ -93,9 +155,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-arena-bg;
+  background-color: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-arena-border rounded-full hover:bg-arena-textMuted;
+  background-color: #2a2a2a;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #888888;
 }
