@@ -15,11 +15,11 @@ import {
 const FADER_LABELS = ['GEMINI', 'GROK', 'QWEN', 'KIMI', 'DEEPSEEK', 'CLAUDE'];
 const FADER_COLORS = [
   '#8b5cf6', // GEMINI - purple
-  '#00ff9f', // GROK - green
-  '#ffb84d', // QWEN - amber
-  '#ff4d6d', // KIMI - red
-  '#3b82f6', // DEEPSEEK - blue
-  '#06b6d4', // CLAUDE - cyan
+  '#00ff88', // GROK - green
+  '#ffd700', // QWEN - yellow
+  '#ff3366', // KIMI - red
+  '#00d4ff', // DEEPSEEK - blue
+  '#00ffff', // CLAUDE - cyan
 ];
 
 // Базовые значения для каждого фейдера (обновлено на ночные балансы)
@@ -214,9 +214,11 @@ export default function FaderEquityChart() {
 
   // Показываем placeholder пока данные не загружены (избегаем hydration ошибок)
   if (!isMounted || chartData.length === 0) {
-    return (
-      <div className="card p-6">
-        <h3 className="text-lg font-bold mb-4 font-mono">Fader Equity</h3>
+  return (
+    <div className="card-pump animate-pump-slide-up">
+      <h3 className="text-lg font-bold mb-6 text-gradient-pink uppercase tracking-wider">
+        Model Performance
+      </h3>
         <div className="text-terminal-textMuted text-sm animate-pulse">Loading chart...</div>
       </div>
     );
@@ -230,25 +232,26 @@ export default function FaderEquityChart() {
       <div style={{ width: '100%', height: '400px' }}>
         <ResponsiveContainer>
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1f1f2e" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" opacity={0.3} />
                     <XAxis
                       dataKey="timeFormatted"
-                      stroke="#8b8b9e"
-                      style={{ fontSize: '12px' }}
+                      stroke="#888888"
+                      style={{ fontSize: '11px', fontWeight: 'bold' }}
                       interval="preserveStartEnd"
                     />
                     <YAxis
-                      stroke="#8b8b9e"
-                      style={{ fontSize: '12px' }}
+                      stroke="#888888"
+                      style={{ fontSize: '11px', fontWeight: 'bold' }}
                       tickFormatter={(value) => `$${value.toFixed(2)}`}
                       domain={yDomain}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#13131a',
-                        border: '1px solid #1f1f2e',
-                        borderRadius: '8px',
-                        color: '#e8e8f0',
+                        backgroundColor: '#0a0a0a',
+                        border: '2px solid #ff00ff',
+                        borderRadius: '12px',
+                        color: '#ffffff',
+                        boxShadow: '0 0 30px rgba(255, 0, 255, 0.5)',
                       }}
               labelFormatter={(value) => {
                 const point = chartData.find((p) => p.timeFormatted === value);

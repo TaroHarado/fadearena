@@ -12,7 +12,6 @@ interface Trade {
   timestamp: number
 }
 
-// Данные трейдов от пользователя
 const TRADES_DATA: Omit<Trade, 'id' | 'timestamp'>[] = [
   { model: 'gpt-5.1', side: 'SHORT', asset: 'AMZN', qty: 0.6940, pnl: -0.18 },
   { model: 'qwen3-max', side: 'LONG', asset: 'NVDA', qty: 0.8505, pnl: -0.12 },
@@ -65,7 +64,6 @@ const TRADES_DATA: Omit<Trade, 'id' | 'timestamp'>[] = [
   { model: 'gemini-3-pro', side: 'SHORT', asset: 'NDX', qty: 0.0060, pnl: -0.24 },
 ]
 
-// Иконки для моделей
 const MODEL_ICONS: Record<string, string> = {
   'gpt-5.1': '🧠',
   'qwen3-max': '🚀',
@@ -76,7 +74,6 @@ const MODEL_ICONS: Record<string, string> = {
   'mystery-model': '❓',
 }
 
-// Иконки для активов
 const ASSET_ICONS: Record<string, string> = {
   'AMZN': '📦',
   'NVDA': '🎮',
@@ -87,15 +84,14 @@ const ASSET_ICONS: Record<string, string> = {
   'MSFT': '💻',
 }
 
-// Цвета для моделей
 const MODEL_COLORS: Record<string, string> = {
-  'gpt-5.1': '#00ff9f',
+  'gpt-5.1': '#ff00ff',
   'qwen3-max': '#8b5cf6',
-  'gemini-3-pro': '#3b82f6',
-  'deepseek-chat-v3.1': '#06b6d4',
-  'kimi-k2-thinking': '#ffb84d',
-  'claude-sonnet-4-5': '#ff4d6d',
-  'mystery-model': '#8b8b9e',
+  'gemini-3-pro': '#00d4ff',
+  'deepseek-chat-v3.1': '#00ffff',
+  'kimi-k2-thinking': '#ffd700',
+  'claude-sonnet-4-5': '#ff3366',
+  'mystery-model': '#888888',
 }
 
 export function TradeFeed() {
@@ -105,20 +101,19 @@ export function TradeFeed() {
 
   useEffect(() => {
     setIsMounted(true)
-    // Генерируем трейды с временными метками (от новых к старым)
     const now = Date.now()
     const generatedTrades: Trade[] = TRADES_DATA.map((trade, index) => ({
       ...trade,
       id: `trade-${index}`,
-      timestamp: now - (index * 60000), // Каждая сделка на 1 минуту раньше предыдущей
+      timestamp: now - (index * 60000),
     }))
     setTrades(generatedTrades)
   }, [])
 
   if (!isMounted) {
     return (
-      <div className="card">
-        <div className="text-terminal-textMuted text-sm animate-pulse">Loading trades...</div>
+      <div className="card-pump">
+        <div className="text-pump-textMuted text-sm animate-pump-pulse">Loading trades...</div>
       </div>
     )
   }
@@ -130,70 +125,67 @@ export function TradeFeed() {
   const uniqueModels = Array.from(new Set(trades.map(t => t.model)))
 
   return (
-    <div className="card">
+    <div className="card-pump animate-pump-slide-up">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-terminal-border">
-        <h2 className="text-lg font-bold font-mono bg-gradient-to-r from-terminal-purple to-terminal-blue bg-clip-text text-transparent">
-          Last trades
+      <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-pump-border">
+        <h2 className="text-2xl font-black text-gradient-pink uppercase tracking-wider">
+          Recent Trades
         </h2>
-        <div className="flex items-center gap-3">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-terminal-bg border border-terminal-border rounded px-3 py-1.5 text-sm font-medium text-terminal-text focus:outline-none focus:ring-1 focus:ring-terminal-purple cursor-pointer hover:border-terminal-purple/50 transition-colors"
-          >
-            <option value="ALL MODELS">ALL MODELS</option>
-            {uniqueModels.map(model => (
-              <option key={model} value={model}>{model}</option>
-            ))}
-          </select>
-        </div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="input-pump w-auto text-sm cursor-pointer hover:border-pump-pink transition-colors"
+        >
+          <option value="ALL MODELS">ALL MODELS</option>
+          {uniqueModels.map(model => (
+            <option key={model} value={model}>{model}</option>
+          ))}
+        </select>
       </div>
 
       {/* Trades List */}
-      <div className="space-y-4 max-h-[600px] overflow-y-auto">
+      <div className="space-y-3 max-h-[600px] overflow-y-auto">
         {filteredTrades.map((trade, index) => {
-          const modelColor = MODEL_COLORS[trade.model] || '#8b8b9e'
+          const modelColor = MODEL_COLORS[trade.model] || '#888888'
           const isPositive = trade.pnl > 0
-          const pnlColor = isPositive ? 'text-terminal-green' : 'text-terminal-red'
-          const sideColor = trade.side === 'LONG' ? '#00ff9f' : '#ff4d6d'
+          const pnlColor = isPositive ? 'text-pump-green' : 'text-pump-red'
+          const sideColor = trade.side === 'LONG' ? '#00ff88' : '#ff3366'
           
           return (
             <div
               key={trade.id}
-              className="border-b border-terminal-border/30 pb-4 last:border-0 last:pb-0 transition-all duration-300 hover:bg-terminal-bg/40 rounded-lg p-3 -m-3 group hover:border-terminal-purple/20 animate-fade-in"
-              style={{ 
-                animationDelay: `${index * 30}ms`
-              }}
+              className="group border-2 border-pump-border rounded-xl p-4 bg-pump-surface hover:border-pump-pink/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,255,0.3)] hover:scale-[1.01]"
+              style={{ animationDelay: `${index * 30}ms` }}
             >
               {/* Header Row */}
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span 
-                    className="text-lg transition-transform duration-300 group-hover:scale-110" 
-                    style={{ filter: `drop-shadow(0 0 6px ${modelColor}60)` }}
+                    className="text-2xl transition-transform duration-300 group-hover:scale-125" 
+                    style={{ filter: `drop-shadow(0 0 10px ${modelColor}80)` }}
                   >
                     {MODEL_ICONS[trade.model] || '🤖'}
                   </span>
-                  <span className="font-semibold text-terminal-text transition-colors group-hover:opacity-80" style={{ color: modelColor }}>
+                  <span className="font-black text-base uppercase tracking-wider" style={{ color: modelColor }}>
                     {trade.model}
                   </span>
-                  <span className="text-terminal-textMuted">→</span>
+                  <span className="text-pump-textMuted font-bold">→</span>
                   <span
-                    className="font-bold text-xs px-2 py-0.5 rounded transition-all duration-300 group-hover:scale-105"
+                    className="font-black text-xs px-3 py-1 rounded-lg uppercase border-2 transition-all duration-300 group-hover:scale-110"
                     style={{
-                      backgroundColor: `${sideColor}25`,
+                      backgroundColor: `${sideColor}20`,
                       color: sideColor,
-                      boxShadow: `0 0 8px ${sideColor}30`,
+                      borderColor: `${sideColor}60`,
+                      boxShadow: `0 0 15px ${sideColor}40`,
                     }}
                   >
                     {trade.side}
                   </span>
-                  <span className="text-terminal-text font-semibold flex items-center gap-1">
+                  <span className="font-black text-base flex items-center gap-1">
                     {ASSET_ICONS[trade.asset] || '📊'} {trade.asset}!
                   </span>
                 </div>
-                <div className="text-xs text-terminal-textMuted font-mono">
+                <div className="text-xs text-pump-textMuted font-black uppercase tracking-wider">
                   {new Date(trade.timestamp).toLocaleDateString('en-US', {
                     month: '2-digit',
                     day: '2-digit',
@@ -206,26 +198,26 @@ export function TradeFeed() {
               </div>
 
               {/* Details Row */}
-              <div className="grid grid-cols-5 gap-4 text-xs font-mono mt-3">
+              <div className="grid grid-cols-5 gap-4 text-xs font-black">
                 <div>
-                  <div className="text-terminal-textMuted mb-1 text-[10px] uppercase">Price</div>
-                  <div className="text-terminal-text font-semibold">-</div>
+                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Price</div>
+                  <div className="text-pump-text">-</div>
                 </div>
                 <div>
-                  <div className="text-terminal-textMuted mb-1 text-[10px] uppercase">Quantity</div>
-                  <div className="text-terminal-text font-semibold">{trade.qty.toFixed(4)}</div>
+                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Quantity</div>
+                  <div className="text-pump-text">{trade.qty.toFixed(4)}</div>
                 </div>
                 <div>
-                  <div className="text-terminal-textMuted mb-1 text-[10px] uppercase">Notional</div>
-                  <div className="text-terminal-text font-semibold">-</div>
+                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Notional</div>
+                  <div className="text-pump-text">-</div>
                 </div>
                 <div>
-                  <div className="text-terminal-textMuted mb-1 text-[10px] uppercase">Holding time</div>
-                  <div className="text-terminal-text font-semibold">-</div>
+                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Holding time</div>
+                  <div className="text-pump-text">-</div>
                 </div>
                 <div>
-                  <div className="text-terminal-textMuted mb-1 text-[10px] uppercase">NET P&L</div>
-                  <div className={`font-bold text-sm ${pnlColor}`}>
+                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">NET P&L</div>
+                  <div className={`text-base ${pnlColor}`}>
                     {isPositive ? '+' : ''}${trade.pnl.toFixed(2)}
                   </div>
                 </div>

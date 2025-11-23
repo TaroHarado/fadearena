@@ -1,151 +1,148 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { STATIC_POSITIONS, type WalletPositions } from '@/data/staticData';
+import { useState } from 'react'
+import { STATIC_POSITIONS, type WalletPositions } from '@/data/staticData'
 
 const FADER_COLORS: Record<string, string> = {
-  GEMINI: '#8b5cf6', // purple
-  GROK: '#00ff9f',   // green
-  QWEN: '#ffb84d',   // amber
-  KIMI: '#ff4d6d',   // red
-  DEEPSEEK: '#3b82f6', // blue
-  CLAUDE: '#06b6d4',  // cyan
-};
+  GEMINI: '#8b5cf6',
+  GROK: '#00ff88',
+  QWEN: '#ffd700',
+  KIMI: '#ff3366',
+  DEEPSEEK: '#00d4ff',
+  CLAUDE: '#00ffff',
+}
 
 export default function PositionsSidebar() {
   const [positions] = useState<{ timestamp: number; wallets: WalletPositions[] }>({
     timestamp: Date.now(),
     wallets: STATIC_POSITIONS,
-  });
+  })
 
   if (!positions || positions.wallets.length === 0) {
     return (
-      <div className="card p-4 w-80">
-        <h3 className="text-lg font-bold mb-4 font-mono">Active Positions</h3>
-        <div className="text-terminal-textMuted text-sm">No positions found</div>
+      <div className="card-pump">
+        <h3 className="text-lg font-bold mb-4 text-gradient-pink uppercase tracking-wider">Open Positions</h3>
+        <div className="text-pump-textMuted text-sm">No positions found</div>
       </div>
-    );
+    )
   }
 
-  const totalPositions = positions.wallets.reduce((sum, w) => sum + w.positions.length, 0);
+  const totalPositions = positions.wallets.reduce((sum, w) => sum + w.positions.length, 0)
 
   return (
-    <div className="card p-4 w-80 max-h-[calc(100vh-200px)] overflow-y-auto hover:shadow-xl hover:shadow-terminal-blue/20 transition-all duration-500">
-      <h3 className="text-lg font-bold mb-4 font-mono bg-gradient-to-r from-terminal-blue to-terminal-cyan bg-clip-text text-transparent">
-        Active Positions
+    <div className="card-pump max-h-[calc(100vh-200px)] overflow-y-auto animate-pump-slide-up">
+      <h3 className="text-lg font-bold mb-4 text-gradient-pink uppercase tracking-wider">
+        Open Positions
       </h3>
-      <div className="text-xs text-terminal-textMuted mb-4">
-        {totalPositions} {totalPositions === 1 ? 'position' : 'positions'} across {positions.wallets.length} {positions.wallets.length === 1 ? 'wallet' : 'wallets'}
+      <div className="text-xs text-pump-textMuted mb-6 font-bold uppercase tracking-wider">
+        {totalPositions} positions • {positions.wallets.length} wallets
       </div>
 
-      <div className="space-y-6">
-        {positions.wallets.map((wallet) => {
+      <div className="space-y-4">
+        {positions.wallets.map((wallet, walletIndex) => {
           if (wallet.positions.length === 0) {
-            return null;
+            return null
           }
 
-          const color = FADER_COLORS[wallet.label] || '#666';
-          const pnlColor = wallet.totalUnrealizedPnl >= 0 ? '#00ff9f' : '#ff4d6d';
+          const color = FADER_COLORS[wallet.label] || '#888888'
+          const pnlColor = wallet.totalUnrealizedPnl >= 0 ? 'text-pump-green' : 'text-pump-red'
 
           return (
-            <div key={wallet.label} className="border-b border-terminal-border pb-4 last:border-0 
-                                               transition-all duration-300 hover:bg-terminal-bg/30 rounded p-2 -m-2">
-              <div className="flex items-center justify-between mb-2">
+            <div
+              key={wallet.label}
+              className="border-2 border-pump-border rounded-xl p-4 bg-pump-surface hover:border-pump-pink/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,255,0.2)]"
+              style={{ animationDelay: `${walletIndex * 100}ms` }}
+            >
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: color }}
+                    className="w-4 h-4 rounded-full animate-pump-pulse"
+                    style={{
+                      backgroundColor: color,
+                      boxShadow: `0 0 10px ${color}80`,
+                    }}
                   />
-                  <span className="font-bold text-sm font-mono">{wallet.label}</span>
+                  <span className="font-black text-sm uppercase tracking-wider" style={{ color }}>
+                    {wallet.label}
+                  </span>
                 </div>
-                <div className="text-xs text-terminal-textMuted">
-                  {wallet.positions.length} pos{wallet.positions.length !== 1 ? 's' : ''}
-                </div>
+                <span className="text-xs text-pump-textMuted font-bold">
+                  {wallet.positions.length} {wallet.positions.length === 1 ? 'pos' : 'poss'}
+                </span>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 mb-3">
                 {wallet.positions.map((pos, idx) => {
-                  const posPnlColor = pos.unrealizedPnl >= 0 ? '#00ff9f' : '#ff4d6d';
-                  const sideColor = pos.side === 'LONG' ? '#00ff9f' : '#ff4d6d';
+                  const posPnlColor = pos.unrealizedPnl >= 0 ? 'text-pump-green' : 'text-pump-red'
+                  const sideColor = pos.side === 'LONG' ? '#00ff88' : '#ff3366'
 
                   return (
                     <div
                       key={`${pos.asset}-${idx}`}
-                      className="bg-terminal-bgSecondary p-2 rounded text-xs
-                                 transition-all duration-300 hover:bg-terminal-bg/50
-                                 hover:scale-[1.02] hover:shadow-md"
+                      className="bg-pump-bg border border-pump-border rounded-lg p-3 hover:border-pump-blue/50 transition-all duration-300"
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-mono font-semibold">{pos.asset.replace('xyz:', '')}</span>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-sm">{pos.asset}</span>
                         <span
-                          className="font-mono font-bold px-1.5 py-0.5 rounded"
+                          className="text-xs font-black px-2 py-0.5 rounded uppercase"
                           style={{
-                            backgroundColor: sideColor + '20',
+                            backgroundColor: `${sideColor}20`,
                             color: sideColor,
+                            border: `1px solid ${sideColor}40`,
                           }}
                         >
                           {pos.side}
                         </span>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-1 text-xs text-terminal-textMuted">
+                      <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <span className="text-terminal-textMuted">Size:</span>{' '}
-                          <span className="font-mono">{pos.size.toFixed(4)}</span>
+                          <span className="text-pump-textMuted">Size:</span>
+                          <span className="font-bold text-pump-text ml-1">{pos.size.toFixed(4)}</span>
                         </div>
                         <div>
-                          <span className="text-terminal-textMuted">Entry:</span>{' '}
-                          <span className="font-mono">${pos.entryPrice.toFixed(2)}</span>
+                          <span className="text-pump-textMuted">Lev:</span>
+                          <span className="font-bold text-pump-text ml-1">{pos.leverage}x</span>
                         </div>
                         <div>
-                          <span className="text-terminal-textMuted">Mark:</span>{' '}
-                          <span className="font-mono">${pos.markPrice.toFixed(2)}</span>
+                          <span className="text-pump-textMuted">Entry:</span>
+                          <span className="font-bold text-pump-text ml-1">${pos.entryPrice.toFixed(2)}</span>
                         </div>
                         <div>
-                          <span className="text-terminal-textMuted">Lev:</span>{' '}
-                          <span className="font-mono">{pos.leverage}x</span>
+                          <span className="text-pump-textMuted">Mark:</span>
+                          <span className="font-bold text-pump-text ml-1">${pos.markPrice.toFixed(2)}</span>
                         </div>
                       </div>
-
-                      <div className="mt-1.5 pt-1.5 border-t border-terminal-border flex items-center justify-between">
-                        <span className="text-terminal-textMuted text-xs">Notional:</span>
-                        <span className="font-mono font-semibold text-xs">
+                      <div className="mt-2 pt-2 border-t border-pump-border flex items-center justify-between">
+                        <span className="text-xs text-pump-textMuted font-bold">Notional:</span>
+                        <span className="font-black text-xs">
                           ${pos.notional.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
-
                       <div className="mt-1 flex items-center justify-between">
-                        <span className="text-terminal-textMuted text-xs">PnL:</span>
-                        <span
-                          className="font-mono font-bold text-xs"
-                          style={{ color: posPnlColor }}
-                        >
+                        <span className="text-xs text-pump-textMuted font-bold">PnL:</span>
+                        <span className={`font-black text-xs ${posPnlColor}`}>
                           {pos.unrealizedPnl >= 0 ? '+' : ''}
                           ${pos.unrealizedPnl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
 
               {wallet.positions.length > 0 && (
-                <div className="mt-3 pt-2 border-t border-terminal-border flex items-center justify-between text-xs">
-                  <span className="text-terminal-textMuted">Total PnL:</span>
-                  <span
-                    className="font-mono font-bold"
-                    style={{ color: pnlColor }}
-                  >
+                <div className="pt-3 border-t-2 border-pump-border flex items-center justify-between">
+                  <span className="text-sm text-pump-textMuted font-bold uppercase tracking-wider">Total PnL:</span>
+                  <span className={`font-black text-lg ${pnlColor}`}>
                     {wallet.totalUnrealizedPnl >= 0 ? '+' : ''}
                     ${wallet.totalUnrealizedPnl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
               )}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
-

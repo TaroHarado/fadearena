@@ -4,89 +4,70 @@
 
 @layer base {
   * {
-    @apply border-terminal-border;
+    @apply border-pump-border;
   }
   
   body {
-    @apply bg-terminal-bg text-terminal-text font-sans antialiased;
-    font-size: 14px;
+    @apply bg-pump-bg text-pump-text font-sans antialiased;
+    font-size: 16px;
     line-height: 1.6;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+    background: #000000;
+    overflow-x: hidden;
   }
   
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 }
 
 @layer utilities {
-  /* Fade in animation */
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes fade-in-delay {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes slide-in {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  @keyframes glow {
+  /* Pump.fun style animations */
+  @keyframes pump-glow {
     0%, 100% {
-      box-shadow: 0 0 5px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.3),
+                  0 0 40px rgba(139, 92, 246, 0.2),
+                  0 0 60px rgba(0, 212, 255, 0.1);
     }
     50% {
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.5),
+                  0 0 60px rgba(139, 92, 246, 0.4),
+                  0 0 90px rgba(0, 212, 255, 0.3);
     }
   }
   
-  @keyframes float {
+  @keyframes pump-pulse {
     0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-  
-  @keyframes pulse-glow {
-    0%, 100% {
-      opacity: 0.3;
       transform: scale(1);
+      opacity: 1;
     }
     50% {
-      opacity: 0.6;
       transform: scale(1.05);
+      opacity: 0.9;
     }
   }
   
-  @keyframes gradient-shift {
+  @keyframes pump-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  @keyframes pump-float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-10px) rotate(1deg);
+    }
+    66% {
+      transform: translateY(-5px) rotate(-1deg);
+    }
+  }
+  
+  @keyframes pump-gradient {
     0% {
       background-position: 0% 50%;
     }
@@ -98,154 +79,187 @@
     }
   }
   
-  @keyframes particle-float {
-    0% {
-      transform: translate(0, 0) rotate(0deg);
+  @keyframes pump-slide-up {
+    from {
       opacity: 0;
+      transform: translateY(30px);
     }
-    10% {
+    to {
       opacity: 1;
+      transform: translateY(0);
     }
-    90% {
+  }
+  
+  @keyframes pump-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
       opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes pump-rotate-glow {
+    0% {
+      filter: hue-rotate(0deg);
     }
     100% {
-      transform: translate(100px, -100px) rotate(360deg);
-      opacity: 0;
+      filter: hue-rotate(360deg);
     }
   }
   
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
+  .animate-pump-glow {
+    animation: pump-glow 3s ease-in-out infinite;
   }
   
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out forwards;
-    opacity: 0;
+  .animate-pump-pulse {
+    animation: pump-pulse 2s ease-in-out infinite;
   }
   
-  .animate-fade-in-delay {
-    animation: fade-in-delay 0.8s ease-out 0.2s forwards;
-    opacity: 0;
-  }
-  
-  .animate-slide-in {
-    animation: slide-in 0.5s ease-out forwards;
-  }
-  
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite;
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  .animate-pulse-glow {
-    animation: pulse-glow 3s ease-in-out infinite;
-  }
-  
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 8s ease infinite;
-  }
-  
-  .animate-shimmer {
+  .animate-pump-shimmer {
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(139, 92, 246, 0.1) 50%,
+      rgba(255, 0, 255, 0.1) 25%,
+      rgba(0, 212, 255, 0.1) 50%,
+      rgba(139, 92, 246, 0.1) 75%,
       transparent 100%
     );
-    background-size: 1000px 100%;
-    animation: shimmer 3s infinite;
+    background-size: 200% 100%;
+    animation: pump-shimmer 3s infinite;
+  }
+  
+  .animate-pump-float {
+    animation: pump-float 4s ease-in-out infinite;
+  }
+  
+  .animate-pump-gradient {
+    background-size: 200% 200%;
+    animation: pump-gradient 5s ease infinite;
+  }
+  
+  .animate-pump-slide-up {
+    animation: pump-slide-up 0.6s ease-out forwards;
+  }
+  
+  .animate-pump-scale-in {
+    animation: pump-scale-in 0.4s ease-out forwards;
+  }
+  
+  .animate-pump-rotate-glow {
+    animation: pump-rotate-glow 10s linear infinite;
+  }
+  
+  /* Gradient text */
+  .text-gradient-pink {
+    @apply bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-green {
+    @apply bg-gradient-to-r from-pump-green via-pump-cyan to-pump-blue bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-orange {
+    @apply bg-gradient-to-r from-pump-orange via-pump-pink to-pump-purple bg-clip-text text-transparent;
   }
 }
 
 @layer components {
-  /* Card style - dark with glowing borders */
-  .card {
-    @apply bg-terminal-surface border border-terminal-border rounded-lg p-4
-           transition-all duration-300 hover:border-terminal-purple/50
-           hover:shadow-lg hover:shadow-terminal-purple/20
-           backdrop-blur-sm;
+  /* Pump.fun style card */
+  .card-pump {
+    @apply bg-pump-surface border-2 border-pump-border rounded-2xl p-6
+           transition-all duration-300 hover:border-pump-pink/50
+           hover:shadow-[0_0_30px_rgba(255,0,255,0.3)]
+           hover:scale-[1.02] backdrop-blur-sm;
   }
   
-  /* Button style with enhanced animations */
-  .btn {
-    @apply px-4 py-2 border border-terminal-border bg-terminal-surface 
-           hover:bg-terminal-bg transition-all duration-300
-           uppercase text-xs font-medium tracking-wide
-           hover:scale-105 active:scale-95;
+  /* Pump.fun style button */
+  .btn-pump {
+    @apply px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider
+           transition-all duration-300 transform hover:scale-105 active:scale-95
+           shadow-lg;
   }
   
-  .btn-primary {
-    @apply bg-gradient-to-r from-terminal-purple to-terminal-blue 
-           text-white border-0 hover:from-terminal-purple/90 hover:to-terminal-blue/90
-           hover:shadow-lg hover:shadow-terminal-purple/40;
+  .btn-pump-primary {
+    @apply bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue
+           text-white border-0 hover:shadow-[0_0_30px_rgba(255,0,255,0.5)]
+           animate-pump-gradient;
+  }
+  
+  .btn-pump-secondary {
+    @apply bg-pump-surface border-2 border-pump-pink text-pump-pink
+           hover:bg-pump-pink hover:text-white;
+  }
+  
+  .btn-pump-success {
+    @apply bg-gradient-to-r from-pump-green via-pump-cyan to-pump-blue
+           text-white border-0 hover:shadow-[0_0_30px_rgba(0,255,136,0.5)];
   }
   
   /* Input style */
-  .input {
-    @apply w-full px-3 py-2 border border-terminal-border bg-terminal-surface
-           focus:outline-none focus:ring-1 focus:ring-terminal-text
-           font-mono text-sm;
+  .input-pump {
+    @apply w-full px-4 py-3 bg-pump-surface border-2 border-pump-border rounded-xl
+           text-pump-text placeholder-pump-textDim focus:outline-none
+           focus:border-pump-pink focus:ring-2 focus:ring-pump-pink/20
+           transition-all duration-300 font-medium;
   }
   
-  /* Label style - small uppercase */
-  .label {
-    @apply text-xs uppercase tracking-wider text-terminal-textMuted font-semibold mb-1 block;
-  }
-  
-  /* Monospace numbers */
-  .number {
-    @apply font-mono tabular-nums;
+  /* Label style */
+  .label-pump {
+    @apply text-xs uppercase tracking-wider text-pump-textMuted font-bold mb-2 block;
   }
   
   /* PnL colors */
   .pnl-positive {
-    @apply text-terminal-green font-semibold;
+    @apply text-pump-green font-bold;
   }
   
   .pnl-negative {
-    @apply text-terminal-red font-semibold;
+    @apply text-pump-red font-bold;
   }
   
   /* Status pill */
-  .pill {
-    @apply inline-flex items-center px-2 py-1 text-xs uppercase tracking-wider
-           border border-terminal-border bg-terminal-surface font-medium;
+  .pill-pump {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold
+           uppercase tracking-wider border-2;
   }
   
-  .pill-success {
-    @apply border-terminal-green text-terminal-green bg-terminal-green/5;
+  .pill-pump-success {
+    @apply border-pump-green text-pump-green bg-pump-green/10;
   }
   
-  .pill-danger {
-    @apply border-terminal-red text-terminal-red bg-terminal-red/10;
+  .pill-pump-danger {
+    @apply border-pump-red text-pump-red bg-pump-red/10;
   }
   
-  .pill-warning {
-    @apply border-terminal-amber text-terminal-amber bg-terminal-amber/10;
+  .pill-pump-warning {
+    @apply border-pump-yellow text-pump-yellow bg-pump-yellow/10;
+  }
+  
+  .pill-pump-info {
+    @apply border-pump-blue text-pump-blue bg-pump-blue/10;
   }
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-terminal-bg;
+  @apply bg-pump-bg;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-terminal-border hover:bg-terminal-textMuted;
+  @apply bg-pump-border rounded-full hover:bg-pump-pink/50;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
+/* Selection */
+::selection {
+  @apply bg-pump-pink/30 text-pump-text;
+}
