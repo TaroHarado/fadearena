@@ -102,19 +102,22 @@ export default function FaderEquityChart() {
 
   useEffect(() => {
     setIsMounted(true)
-    const initialData = generateInitialChartData()
-    setChartData(initialData)
-    
-    if (initialData.length > 0) {
-      const lastPoint = initialData[initialData.length - 1]
-      setCurrentValues({
-        GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
-        GROK: lastPoint.GROK || BASE_VALUES.GROK,
-        QWEN: lastPoint.QWEN || BASE_VALUES.QWEN,
-        KIMI: lastPoint.KIMI || BASE_VALUES.KIMI,
-        DEEPSEEK: lastPoint.DEEPSEEK || BASE_VALUES.DEEPSEEK,
-        CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
-      })
+    // Генерируем данные только на клиенте
+    if (typeof window !== 'undefined') {
+      const initialData = generateInitialChartData()
+      setChartData(initialData)
+      
+      if (initialData.length > 0) {
+        const lastPoint = initialData[initialData.length - 1]
+        setCurrentValues({
+          GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
+          GROK: lastPoint.GROK || BASE_VALUES.GROK,
+          QWEN: lastPoint.QWEN || BASE_VALUES.QWEN,
+          KIMI: lastPoint.KIMI || BASE_VALUES.KIMI,
+          DEEPSEEK: lastPoint.DEEPSEEK || BASE_VALUES.DEEPSEEK,
+          CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
+        })
+      }
     }
   }, [])
 
