@@ -28,7 +28,7 @@ export default function Home() {
             
             <div className="flex items-center gap-4">
               <a
-                href="https://x.com/reversearena_fun"
+                href="https://x.com/reverse_arena"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-arena btn-arena-secondary text-sm"
