@@ -10,19 +10,19 @@ export function TopNav() {
   }
 
   return (
-    <nav className="border-b border-terminal-border bg-terminal-surface">
+    <nav className="border-b border-terminal-border bg-terminal-surface/80 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 font-mono text-lg font-bold">
             <Image
               src="/logo.png"
-              alt="FadeArena Logo"
+              alt="ShortArena Logo"
               width={32}
               height={32}
               className="rounded-full"
             />
-            <span>FadeArena</span>
+            <span>ShortArena.fun</span>
           </Link>
 
           {/* Nav Links */}
@@ -39,10 +39,10 @@ export function TopNav() {
           <div className="flex items-center gap-3">
             {/* Social buttons */}
             <a
-              href="https://x.com/fadearena_sol"
+              href="https://x.com/shortarena_fun"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-xs font-medium text-terminal-text"
+              className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded-lg hover:border-terminal-purple/50 hover:bg-terminal-surface/80 transition-all text-xs font-medium text-terminal-text hover:shadow-lg hover:shadow-terminal-purple/20"
             >
               Twitter
             </a>
@@ -50,7 +50,7 @@ export function TopNav() {
               href="https://pump.fun"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-xs font-medium text-terminal-text"
+              className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded-lg hover:border-terminal-blue/50 hover:bg-terminal-surface/80 transition-all text-xs font-medium text-terminal-text hover:shadow-lg hover:shadow-terminal-blue/20"
             >
               Pump.fun
             </a>

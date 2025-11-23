@@ -8,15 +8,15 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-terminal-bg p-8 relative overflow-hidden">
       {/* Animated background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-terminal-bg via-terminal-bg to-terminal-surface/20 pointer-events-none animate-pulse opacity-50" />
+      <div className="fixed inset-0 bg-gradient-to-br from-terminal-purple/10 via-terminal-bg to-terminal-blue/10 pointer-events-none animate-pulse opacity-30" />
       
       {/* Top right buttons */}
       <div className="fixed top-8 right-8 z-20 flex gap-3">
         <a
-          href="https://x.com/fadearena_sol"
+          href="https://x.com/shortarena_fun"
           target="_blank"
           rel="noopener noreferrer"
-          className="px-4 py-2 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-sm font-medium text-terminal-text"
+          className="px-4 py-2 bg-terminal-surface border border-terminal-border rounded-lg hover:border-terminal-purple/50 hover:bg-terminal-surface/80 transition-all text-sm font-medium text-terminal-text hover:shadow-lg hover:shadow-terminal-purple/20"
         >
           Twitter
         </a>
@@ -24,7 +24,7 @@ export default function Home() {
           href="https://pump.fun"
           target="_blank"
           rel="noopener noreferrer"
-          className="px-4 py-2 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-sm font-medium text-terminal-text"
+          className="px-4 py-2 bg-terminal-surface border border-terminal-border rounded-lg hover:border-terminal-blue/50 hover:bg-terminal-surface/80 transition-all text-sm font-medium text-terminal-text hover:shadow-lg hover:shadow-terminal-blue/20"
         >
           Pump.fun
         </a>
@@ -35,7 +35,7 @@ export default function Home() {
           <div className="flex justify-center mb-4">
             <Image
               src="/logo.png"
-              alt="FadeArena Logo"
+              alt="ShortArena Logo"
               width={120}
               height={120}
               className="rounded-full"
@@ -43,10 +43,10 @@ export default function Home() {
             />
           </div>
           <h1 className="text-4xl font-bold mb-4 font-mono tracking-tight 
-                         bg-gradient-to-r from-terminal-text to-terminal-textMuted 
+                         bg-gradient-to-r from-terminal-purple via-terminal-blue to-terminal-cyan 
                          bg-clip-text text-transparent
                          animate-fade-in">
-            FadeArena
+            ShortArena.fun
           </h1>
           <p className="text-terminal-textMuted mb-8 text-base leading-relaxed animate-fade-in">
             Inverse the AI traders from Alpha Arena on Hyperliquid.

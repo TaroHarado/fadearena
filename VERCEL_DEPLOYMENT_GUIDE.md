@@ -164,3 +164,5 @@ NEXT_PUBLIC_API_URL = https://fadearena-api.fly.dev
 
 API будет работать через `https://fadearena-api.fly.dev`
 
+
+

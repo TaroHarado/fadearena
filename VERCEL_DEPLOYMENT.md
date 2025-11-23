@@ -81,3 +81,5 @@ NEXT_PUBLIC_API_URL=https://your-api-domain.com
 - ✅ Чарты отображаются
 - ✅ Данные обновляются
 
+
+

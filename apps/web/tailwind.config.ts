@@ -9,20 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Retro terminal colors inspired by nof1.ai
+        // Modern dark theme with purple-blue accents
         terminal: {
-          bg: '#fafafa',
-          surface: '#ffffff',
-          border: '#e5e5e5',
-          text: '#1a1a1a',
-          textMuted: '#666666',
-          green: '#00a86b',
-          red: '#dc3545',
-          amber: '#ffb800',
+          bg: '#0a0a0f',
+          surface: '#13131a',
+          border: '#1f1f2e',
+          text: '#e8e8f0',
+          textMuted: '#8b8b9e',
+          green: '#00ff9f',
+          red: '#ff4d6d',
+          amber: '#ffb84d',
+          purple: '#8b5cf6',
+          blue: '#3b82f6',
+          cyan: '#06b6d4',
         },
       },
       fontFamily: {
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         'xs': ['11px', { lineHeight: '1.4' }],

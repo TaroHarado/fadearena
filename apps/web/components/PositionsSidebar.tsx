@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { STATIC_POSITIONS, type WalletPositions } from '@/data/staticData';
 
 const FADER_COLORS: Record<string, string> = {
-  GEMINI: '#8b5cf6',
-  GROK: '#ec4899',
-  QWEN: '#06b6d4',
-  KIMI: '#f59e0b',
-  DEEPSEEK: '#10b981',
-  CLAUDE: '#3b82f6',
+  GEMINI: '#8b5cf6', // purple
+  GROK: '#00ff9f',   // green
+  QWEN: '#ffb84d',   // amber
+  KIMI: '#ff4d6d',   // red
+  DEEPSEEK: '#3b82f6', // blue
+  CLAUDE: '#06b6d4',  // cyan
 };
 
 export default function PositionsSidebar() {
@@ -43,7 +43,7 @@ export default function PositionsSidebar() {
           }
 
           const color = FADER_COLORS[wallet.label] || '#666';
-          const pnlColor = wallet.totalUnrealizedPnl >= 0 ? '#10b981' : '#ef4444';
+          const pnlColor = wallet.totalUnrealizedPnl >= 0 ? '#00ff9f' : '#ff4d6d';
 
           return (
             <div key={wallet.label} className="border-b border-terminal-border pb-4 last:border-0 

@@ -14,12 +14,12 @@ import {
 
 const FADER_LABELS = ['GEMINI', 'GROK', 'QWEN', 'KIMI', 'DEEPSEEK', 'CLAUDE'];
 const FADER_COLORS = [
-  '#8884d8', // GEMINI - purple
-  '#82ca9d', // GROK - green
-  '#ffc658', // QWEN - yellow
-  '#ff7300', // KIMI - orange
-  '#0088fe', // DEEPSEEK - blue
-  '#00c49f', // CLAUDE - teal
+  '#8b5cf6', // GEMINI - purple
+  '#00ff9f', // GROK - green
+  '#ffb84d', // QWEN - amber
+  '#ff4d6d', // KIMI - red
+  '#3b82f6', // DEEPSEEK - blue
+  '#06b6d4', // CLAUDE - cyan
 ];
 
 // Базовые значения для каждого фейдера (из скриншота)
@@ -228,25 +228,26 @@ export default function FaderEquityChart() {
       <div style={{ width: '100%', height: '400px' }}>
         <ResponsiveContainer>
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-            <XAxis
-              dataKey="timeFormatted"
-              stroke="#888"
-              style={{ fontSize: '12px' }}
-              interval="preserveStartEnd"
-            />
-            <YAxis
-              stroke="#888"
-              style={{ fontSize: '12px' }}
-              tickFormatter={(value) => `$${value.toFixed(2)}`}
-              domain={yDomain}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#1a1a1a',
-                border: '1px solid #333',
-                borderRadius: '4px',
-              }}
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1f1f2e" />
+                    <XAxis
+                      dataKey="timeFormatted"
+                      stroke="#8b8b9e"
+                      style={{ fontSize: '12px' }}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis
+                      stroke="#8b8b9e"
+                      style={{ fontSize: '12px' }}
+                      tickFormatter={(value) => `$${value.toFixed(2)}`}
+                      domain={yDomain}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#13131a',
+                        border: '1px solid #1f1f2e',
+                        borderRadius: '8px',
+                        color: '#e8e8f0',
+                      }}
               labelFormatter={(value) => {
                 const point = chartData.find((p) => p.timeFormatted === value);
                 if (point) {

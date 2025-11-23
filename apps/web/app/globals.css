@@ -8,9 +8,12 @@
   }
   
   body {
-    @apply bg-terminal-bg text-terminal-text font-mono antialiased;
-    font-size: 13px;
+    @apply bg-terminal-bg text-terminal-text font-sans antialiased;
+    font-size: 14px;
     line-height: 1.6;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
   }
   
   /* Smooth scrolling */
@@ -82,11 +85,12 @@
 }
 
 @layer components {
-  /* Card style - thin borders, light background with animations */
+  /* Card style - dark with glowing borders */
   .card {
-    @apply bg-terminal-surface border border-terminal-border rounded-sm p-4
-           transition-all duration-300 hover:border-terminal-text/30
-           hover:shadow-lg hover:shadow-terminal-text/10;
+    @apply bg-terminal-surface border border-terminal-border rounded-lg p-4
+           transition-all duration-300 hover:border-terminal-purple/50
+           hover:shadow-lg hover:shadow-terminal-purple/20
+           backdrop-blur-sm;
   }
   
   /* Button style with enhanced animations */
@@ -98,8 +102,9 @@
   }
   
   .btn-primary {
-    @apply bg-terminal-text text-terminal-bg hover:bg-terminal-text/90
-           hover:shadow-lg hover:shadow-terminal-text/30;
+    @apply bg-gradient-to-r from-terminal-purple to-terminal-blue 
+           text-white border-0 hover:from-terminal-purple/90 hover:to-terminal-blue/90
+           hover:shadow-lg hover:shadow-terminal-purple/40;
   }
   
   /* Input style */
@@ -111,7 +116,7 @@
   
   /* Label style - small uppercase */
   .label {
-    @apply text-xs uppercase tracking-wider text-terminal-textMuted font-medium mb-1 block;
+    @apply text-xs uppercase tracking-wider text-terminal-textMuted font-semibold mb-1 block;
   }
   
   /* Monospace numbers */
@@ -121,11 +126,11 @@
   
   /* PnL colors */
   .pnl-positive {
-    @apply text-terminal-green;
+    @apply text-terminal-green font-semibold;
   }
   
   .pnl-negative {
-    @apply text-terminal-red;
+    @apply text-terminal-red font-semibold;
   }
   
   /* Status pill */
@@ -139,11 +144,11 @@
   }
   
   .pill-danger {
-    @apply border-terminal-red text-terminal-red bg-terminal-red/5;
+    @apply border-terminal-red text-terminal-red bg-terminal-red/10;
   }
   
   .pill-warning {
-    @apply border-terminal-amber text-terminal-amber bg-terminal-amber/5;
+    @apply border-terminal-amber text-terminal-amber bg-terminal-amber/10;
   }
 }
 

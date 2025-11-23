@@ -41,35 +41,36 @@ export function EquityChart() {
       <h2 className="label mb-4">Equity Curve</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#1f1f2e" />
           <XAxis
             dataKey="time"
-            stroke="#666"
+            stroke="#8b8b9e"
             tick={{ fontSize: 11 }}
             interval="preserveStartEnd"
           />
           <YAxis
-            stroke="#666"
+            stroke="#8b8b9e"
             tick={{ fontSize: 11 }}
             tickFormatter={(value) => `$${value.toLocaleString()}`}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #e5e5e5',
-              borderRadius: '2px',
+              backgroundColor: '#13131a',
+              border: '1px solid #1f1f2e',
+              borderRadius: '8px',
               fontSize: '12px',
+              color: '#e8e8f0',
             }}
             formatter={(value: number) => `$${value.toFixed(2)}`}
           />
           <Legend
-            wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+            wrapperStyle={{ fontSize: '12px', paddingTop: '10px', color: '#e8e8f0' }}
             iconType="line"
           />
           <Line
             type="monotone"
             dataKey="bots"
-            stroke="#666"
+            stroke="#8b8b9e"
             strokeWidth={1.5}
             dot={false}
             name="Bots Aggregate"
@@ -77,10 +78,10 @@ export function EquityChart() {
           <Line
             type="monotone"
             dataKey="fadeArena"
-            stroke="#00a86b"
+            stroke="#8b5cf6"
             strokeWidth={2}
             dot={false}
-            name="FadeArena"
+            name="ShortArena"
           />
         </LineChart>
       </ResponsiveContainer>
