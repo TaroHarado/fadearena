@@ -74,16 +74,6 @@ const MODEL_ICONS: Record<string, string> = {
   'mystery-model': '❓',
 }
 
-const ASSET_ICONS: Record<string, string> = {
-  'AMZN': '📦',
-  'NVDA': '🎮',
-  'NDX': '📈',
-  'GOOGL': '🔍',
-  'PLTR': '🛡️',
-  'TSLA': '⚡',
-  'MSFT': '💻',
-}
-
 const MODEL_COLORS: Record<string, string> = {
   'gpt-5.1': '#ff00ff',
   'qwen3-max': '#8b5cf6',
@@ -97,10 +87,8 @@ const MODEL_COLORS: Record<string, string> = {
 export function TradeFeed() {
   const [trades, setTrades] = useState<Trade[]>([])
   const [filter, setFilter] = useState<string>('ALL MODELS')
-  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true)
     const now = Date.now()
     const generatedTrades: Trade[] = TRADES_DATA.map((trade, index) => ({
       ...trade,
@@ -110,10 +98,10 @@ export function TradeFeed() {
     setTrades(generatedTrades)
   }, [])
 
-  if (!isMounted) {
+  if (trades.length === 0) {
     return (
-      <div className="card-pump">
-        <div className="text-pump-textMuted text-sm animate-pump-pulse">Loading trades...</div>
+      <div className="card-arena">
+        <div className="text-arena-textMuted text-sm">Loading trades...</div>
       </div>
     )
   }
@@ -125,16 +113,13 @@ export function TradeFeed() {
   const uniqueModels = Array.from(new Set(trades.map(t => t.model)))
 
   return (
-    <div className="card-pump animate-pump-slide-up">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-pump-border">
-        <h2 className="text-2xl font-black text-gradient-pink uppercase tracking-wider">
-          Recent Trades
-        </h2>
+    <div className="card-arena">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-arena-border">
+        <h2 className="text-xl font-bold text-arena-text">Recent Trades</h2>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="input-pump w-auto text-sm cursor-pointer hover:border-pump-pink transition-colors"
+          className="input-arena w-auto text-sm"
         >
           <option value="ALL MODELS">ALL MODELS</option>
           {uniqueModels.map(model => (
@@ -143,49 +128,37 @@ export function TradeFeed() {
         </select>
       </div>
 
-      {/* Trades List */}
       <div className="space-y-3 max-h-[600px] overflow-y-auto">
-        {filteredTrades.map((trade, index) => {
+        {filteredTrades.map((trade) => {
           const modelColor = MODEL_COLORS[trade.model] || '#888888'
           const isPositive = trade.pnl > 0
-          const pnlColor = isPositive ? 'text-pump-green' : 'text-pump-red'
+          const pnlColor = isPositive ? 'pnl-positive' : 'pnl-negative'
           const sideColor = trade.side === 'LONG' ? '#00ff88' : '#ff3366'
           
           return (
             <div
               key={trade.id}
-              className="group border-2 border-pump-border rounded-xl p-4 bg-pump-surface hover:border-pump-pink/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,255,0.3)] hover:scale-[1.01]"
-              style={{ animationDelay: `${index * 30}ms` }}
+              className="border border-arena-border rounded-lg p-4 bg-arena-bg hover:border-arena-blue transition-colors"
             >
-              {/* Header Row */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span 
-                    className="text-2xl transition-transform duration-300 group-hover:scale-125" 
-                    style={{ filter: `drop-shadow(0 0 10px ${modelColor}80)` }}
-                  >
-                    {MODEL_ICONS[trade.model] || '🤖'}
-                  </span>
-                  <span className="font-black text-base uppercase tracking-wider" style={{ color: modelColor }}>
+                  <span className="text-xl">{MODEL_ICONS[trade.model] || '🤖'}</span>
+                  <span className="font-bold text-sm" style={{ color: modelColor }}>
                     {trade.model}
                   </span>
-                  <span className="text-pump-textMuted font-bold">→</span>
+                  <span className="text-arena-textMuted">→</span>
                   <span
-                    className="font-black text-xs px-3 py-1 rounded-lg uppercase border-2 transition-all duration-300 group-hover:scale-110"
+                    className="text-xs px-2 py-1 rounded font-bold"
                     style={{
                       backgroundColor: `${sideColor}20`,
                       color: sideColor,
-                      borderColor: `${sideColor}60`,
-                      boxShadow: `0 0 15px ${sideColor}40`,
                     }}
                   >
                     {trade.side}
                   </span>
-                  <span className="font-black text-base flex items-center gap-1">
-                    {ASSET_ICONS[trade.asset] || '📊'} {trade.asset}!
-                  </span>
+                  <span className="font-bold text-sm">{trade.asset}!</span>
                 </div>
-                <div className="text-xs text-pump-textMuted font-black uppercase tracking-wider">
+                <div className="text-xs text-arena-textMuted font-mono">
                   {new Date(trade.timestamp).toLocaleDateString('en-US', {
                     month: '2-digit',
                     day: '2-digit',
@@ -197,27 +170,26 @@ export function TradeFeed() {
                 </div>
               </div>
 
-              {/* Details Row */}
-              <div className="grid grid-cols-5 gap-4 text-xs font-black">
+              <div className="grid grid-cols-5 gap-4 text-xs">
                 <div>
-                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Price</div>
-                  <div className="text-pump-text">-</div>
+                  <div className="text-arena-textMuted mb-1 text-[10px]">Price</div>
+                  <div className="text-arena-text font-mono">-</div>
                 </div>
                 <div>
-                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Quantity</div>
-                  <div className="text-pump-text">{trade.qty.toFixed(4)}</div>
+                  <div className="text-arena-textMuted mb-1 text-[10px]">Quantity</div>
+                  <div className="text-arena-text font-mono">{trade.qty.toFixed(4)}</div>
                 </div>
                 <div>
-                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Notional</div>
-                  <div className="text-pump-text">-</div>
+                  <div className="text-arena-textMuted mb-1 text-[10px]">Notional</div>
+                  <div className="text-arena-text font-mono">-</div>
                 </div>
                 <div>
-                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">Holding time</div>
-                  <div className="text-pump-text">-</div>
+                  <div className="text-arena-textMuted mb-1 text-[10px]">Holding time</div>
+                  <div className="text-arena-text font-mono">-</div>
                 </div>
                 <div>
-                  <div className="text-pump-textMuted mb-1 text-[10px] uppercase tracking-wider">NET P&L</div>
-                  <div className={`text-base ${pnlColor}`}>
+                  <div className="text-arena-textMuted mb-1 text-[10px]">NET P&L</div>
+                  <div className={`font-bold ${pnlColor}`}>
                     {isPositive ? '+' : ''}${trade.pnl.toFixed(2)}
                   </div>
                 </div>

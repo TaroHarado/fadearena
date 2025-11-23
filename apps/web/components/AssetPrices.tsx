@@ -45,37 +45,19 @@ export default function AssetPrices() {
     return () => clearInterval(intervalId)
   }, [])
 
-  const colors = [
-    'from-pump-pink to-pump-purple',
-    'from-pump-purple to-pump-blue',
-    'from-pump-blue to-pump-cyan',
-    'from-pump-cyan to-pump-green',
-    'from-pump-green to-pump-yellow',
-    'from-pump-yellow to-pump-orange',
-    'from-pump-orange to-pump-pink',
-  ]
-
   return (
-    <div className="card-pump animate-pump-slide-up">
-      <h3 className="text-lg font-bold mb-4 text-gradient-pink uppercase tracking-wider">
-        Market Prices
-      </h3>
+    <div className="card-arena">
+      <h3 className="text-lg font-bold mb-4 text-arena-text">Asset Prices</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-        {prices.map((asset, index) => (
+        {prices.map((asset) => (
           <div
             key={asset.ticker}
-            className="group relative p-4 rounded-xl bg-pump-surface border-2 border-pump-border hover:border-pump-pink/50 transition-all duration-300 hover:scale-110 hover:shadow-[0_0_20px_rgba(255,0,255,0.3)]"
-            style={{ animationDelay: `${index * 50}ms` }}
+            className="p-3 rounded-lg bg-arena-bg border border-arena-border hover:border-arena-blue transition-colors"
           >
-            <div className="text-xs text-pump-textMuted mb-2 font-bold uppercase tracking-wider">
-              {asset.ticker}
-            </div>
-            <div className={`text-lg font-black bg-gradient-to-r ${colors[index % colors.length]} bg-clip-text text-transparent`}>
+            <div className="text-xs text-arena-textMuted mb-1">{asset.ticker}</div>
+            <div className="text-sm font-bold text-arena-text">
               ${typeof asset.price === 'number' ? asset.price.toFixed(2) : '0.00'}
             </div>
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity"
-                 style={{ background: `linear-gradient(135deg, ${colors[index % colors.length]})` }}
-            />
           </div>
         ))}
       </div>

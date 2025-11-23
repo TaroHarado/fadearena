@@ -10,40 +10,32 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('live')
 
   return (
-    <div className="min-h-screen bg-pump-bg p-6">
+    <div className="min-h-screen bg-arena-bg p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Tab Navigation */}
-        <div className="flex gap-4 border-b-2 border-pump-border">
+        <div className="flex gap-4 border-b border-arena-border">
           <button
             onClick={() => setActiveTab('live')}
-            className={`px-6 py-3 text-sm uppercase tracking-wider font-black transition-all duration-300 relative ${
+            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
               activeTab === 'live'
-                ? 'text-pump-pink'
-                : 'text-pump-textMuted hover:text-pump-text'
+                ? 'text-arena-text border-b-2 border-arena-blue'
+                : 'text-arena-textMuted hover:text-arena-text'
             }`}
           >
             Live Trades
-            {activeTab === 'live' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue animate-pump-gradient" />
-            )}
           </button>
           <button
             onClick={() => setActiveTab('models')}
-            className={`px-6 py-3 text-sm uppercase tracking-wider font-black transition-all duration-300 relative ${
+            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
               activeTab === 'models'
-                ? 'text-pump-pink'
-                : 'text-pump-textMuted hover:text-pump-text'
+                ? 'text-arena-text border-b-2 border-arena-blue'
+                : 'text-arena-textMuted hover:text-arena-text'
             }`}
           >
             Models
-            {activeTab === 'models' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue animate-pump-gradient" />
-            )}
           </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="animate-pump-slide-up">
+        <div>
           {activeTab === 'live' && <LiveTab />}
           {activeTab === 'models' && <ModelsTab />}
         </div>

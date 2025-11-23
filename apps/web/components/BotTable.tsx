@@ -124,8 +124,8 @@ export function BotTable() {
 
   if (!data || data.bots.length === 0) {
     return (
-      <div className="card-pump">
-        <div className="text-pump-textMuted text-sm">No bot data available</div>
+      <div className="card-arena">
+        <div className="text-arena-textMuted text-sm">No bot data available</div>
       </div>
     )
   }
@@ -135,105 +135,102 @@ export function BotTable() {
   }
 
   return (
-    <div className="card-pump animate-pump-slide-up">
-      <h2 className="text-2xl font-black mb-6 text-gradient-pink uppercase tracking-wider">
-        AI Models Leaderboard
-      </h2>
+    <div className="card-arena">
+      <h2 className="text-xl font-bold mb-4 text-arena-text">AI Models Leaderboard</h2>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b-2 border-pump-border">
-              <th className="text-left py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+            <tr className="border-b border-arena-border">
+              <th className="text-left py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Model
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Wallet
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Positions
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Unrealized PnL
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Total PnL
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Daily PnL
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Win Rate
               </th>
-              <th className="text-right py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-right py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Score
               </th>
-              <th className="text-center py-4 px-4 uppercase text-xs font-black text-pump-textMuted tracking-wider">
+              <th className="text-center py-3 px-4 text-xs font-semibold text-arena-textMuted uppercase">
                 Status
               </th>
             </tr>
           </thead>
           <tbody>
-            {data.bots.map((bot, index) => {
+            {data.bots.map((bot) => {
               const metric = calculateMetric(bot)
               const totalPnL = bot.stats.totalPnL + (bot.currentUnrealizedPnL ?? 0)
               
               return (
                 <tr
                   key={bot.id}
-                  className="border-b border-pump-border hover:bg-pump-surface/50 transition-all duration-300 group"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="border-b border-arena-border hover:bg-arena-surface/50 transition-colors"
                 >
-                  <td className="py-4 px-4 font-black text-pump-text">{bot.name}</td>
-                  <td className="py-4 px-4 text-right">
+                  <td className="py-3 px-4 font-semibold text-arena-text">{bot.name}</td>
+                  <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <span className="font-mono text-xs text-pump-textMuted">
+                      <span className="font-mono text-xs text-arena-textMuted">
                         {(bot.faderWalletAddress || bot.walletAddress).slice(0, 6)}...{(bot.faderWalletAddress || bot.walletAddress).slice(-4)}
                       </span>
                       <a
                         href={`https://app.hyperliquid.xyz/explorer/address/${bot.faderWalletAddress || bot.walletAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-pump-textMuted hover:text-pump-pink transition-colors group-hover:scale-110"
+                        className="text-arena-textMuted hover:text-arena-blue transition-colors"
                         title="View on Hyperliquid"
                       >
                         <ExternalLinkIcon size={14} />
                       </a>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-right font-black text-pump-text">
+                  <td className="py-3 px-4 text-right font-semibold text-arena-text">
                     {bot.currentOpenPositions ?? 0}
                   </td>
-                  <td className={`py-4 px-4 text-right font-black ${
-                    (bot.currentUnrealizedPnL ?? 0) >= 0 ? 'text-pump-green' : 'text-pump-red'
+                  <td className={`py-3 px-4 text-right font-semibold ${
+                    (bot.currentUnrealizedPnL ?? 0) >= 0 ? 'pnl-positive' : 'pnl-negative'
                   }`}>
                     ${(bot.currentUnrealizedPnL ?? 0).toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
                   </td>
-                  <td className={`py-4 px-4 text-right font-black ${
-                    totalPnL >= 0 ? 'text-pump-green' : 'text-pump-red'
+                  <td className={`py-3 px-4 text-right font-semibold ${
+                    totalPnL >= 0 ? 'pnl-positive' : 'pnl-negative'
                   }`}>
                     ${totalPnL.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
                   </td>
-                  <td className={`py-4 px-4 text-right font-black ${
-                    bot.stats.dailyPnL >= 0 ? 'text-pump-green' : 'text-pump-red'
+                  <td className={`py-3 px-4 text-right font-semibold ${
+                    bot.stats.dailyPnL >= 0 ? 'pnl-positive' : 'pnl-negative'
                   }`}>
                     ${bot.stats.dailyPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="py-4 px-4 text-right font-black text-pump-text">
+                  <td className="py-3 px-4 text-right font-semibold text-arena-text">
                     {(bot.stats.winRate * 100).toFixed(1)}%
                   </td>
-                  <td className="py-4 px-4 text-right font-black text-pump-text">
+                  <td className="py-3 px-4 text-right font-semibold text-arena-text">
                     {metric.toFixed(2)}
                   </td>
-                  <td className="py-4 px-4 text-center">
+                  <td className="py-3 px-4 text-center">
                     <span
-                      className={`pill-pump ${
-                        bot.enabled ? 'pill-pump-success' : 'pill-pump-warning'
+                      className={`pill-arena ${
+                        bot.enabled ? 'pill-arena-success' : 'pill-arena-danger'
                       }`}
                     >
                       {bot.enabled ? 'Active' : 'Disabled'}

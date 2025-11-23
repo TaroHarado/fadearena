@@ -4,15 +4,13 @@
 
 @layer base {
   * {
-    @apply border-pump-border;
+    @apply border-arena-border;
   }
   
   body {
-    @apply bg-pump-bg text-pump-text font-sans antialiased;
+    @apply bg-arena-bg text-arena-text font-sans antialiased;
     font-size: 16px;
     line-height: 1.6;
-    background: #000000;
-    overflow-x: hidden;
   }
   
   html {
@@ -21,68 +19,10 @@
 }
 
 @layer utilities {
-  /* Pump.fun style animations */
-  @keyframes pump-glow {
-    0%, 100% {
-      box-shadow: 0 0 20px rgba(255, 0, 255, 0.3),
-                  0 0 40px rgba(139, 92, 246, 0.2),
-                  0 0 60px rgba(0, 212, 255, 0.1);
-    }
-    50% {
-      box-shadow: 0 0 30px rgba(255, 0, 255, 0.5),
-                  0 0 60px rgba(139, 92, 246, 0.4),
-                  0 0 90px rgba(0, 212, 255, 0.3);
-    }
-  }
-  
-  @keyframes pump-pulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-  }
-  
-  @keyframes pump-shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-  
-  @keyframes pump-float {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    33% {
-      transform: translateY(-10px) rotate(1deg);
-    }
-    66% {
-      transform: translateY(-5px) rotate(-1deg);
-    }
-  }
-  
-  @keyframes pump-gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  
-  @keyframes pump-slide-up {
+  @keyframes fade-in {
     from {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(10px);
     }
     to {
       opacity: 1;
@@ -90,176 +30,72 @@
     }
   }
   
-  @keyframes pump-scale-in {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  @keyframes pump-rotate-glow {
-    0% {
-      filter: hue-rotate(0deg);
-    }
-    100% {
-      filter: hue-rotate(360deg);
-    }
-  }
-  
-  .animate-pump-glow {
-    animation: pump-glow 3s ease-in-out infinite;
-  }
-  
-  .animate-pump-pulse {
-    animation: pump-pulse 2s ease-in-out infinite;
-  }
-  
-  .animate-pump-shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 0, 255, 0.1) 25%,
-      rgba(0, 212, 255, 0.1) 50%,
-      rgba(139, 92, 246, 0.1) 75%,
-      transparent 100%
-    );
-    background-size: 200% 100%;
-    animation: pump-shimmer 3s infinite;
-  }
-  
-  .animate-pump-float {
-    animation: pump-float 4s ease-in-out infinite;
-  }
-  
-  .animate-pump-gradient {
-    background-size: 200% 200%;
-    animation: pump-gradient 5s ease infinite;
-  }
-  
-  .animate-pump-slide-up {
-    animation: pump-slide-up 0.6s ease-out forwards;
-  }
-  
-  .animate-pump-scale-in {
-    animation: pump-scale-in 0.4s ease-out forwards;
-  }
-  
-  .animate-pump-rotate-glow {
-    animation: pump-rotate-glow 10s linear infinite;
-  }
-  
-  /* Gradient text */
-  .text-gradient-pink {
-    @apply bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue bg-clip-text text-transparent;
-  }
-  
-  .text-gradient-green {
-    @apply bg-gradient-to-r from-pump-green via-pump-cyan to-pump-blue bg-clip-text text-transparent;
-  }
-  
-  .text-gradient-orange {
-    @apply bg-gradient-to-r from-pump-orange via-pump-pink to-pump-purple bg-clip-text text-transparent;
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
   }
 }
 
 @layer components {
-  /* Pump.fun style card */
-  .card-pump {
-    @apply bg-pump-surface border-2 border-pump-border rounded-2xl p-6
-           transition-all duration-300 hover:border-pump-pink/50
-           hover:shadow-[0_0_30px_rgba(255,0,255,0.3)]
-           hover:scale-[1.02] backdrop-blur-sm;
+  .card-arena {
+    @apply bg-arena-surface border border-arena-border rounded-lg p-6
+           transition-all duration-200 hover:border-arena-blue/50;
   }
   
-  /* Pump.fun style button */
-  .btn-pump {
-    @apply px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider
-           transition-all duration-300 transform hover:scale-105 active:scale-95
-           shadow-lg;
+  .btn-arena {
+    @apply px-6 py-3 rounded-lg font-semibold text-sm
+           transition-all duration-200 hover:scale-105 active:scale-95;
   }
   
-  .btn-pump-primary {
-    @apply bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue
-           text-white border-0 hover:shadow-[0_0_30px_rgba(255,0,255,0.5)]
-           animate-pump-gradient;
+  .btn-arena-primary {
+    @apply bg-arena-blue text-white hover:bg-arena-blue/90;
   }
   
-  .btn-pump-secondary {
-    @apply bg-pump-surface border-2 border-pump-pink text-pump-pink
-           hover:bg-pump-pink hover:text-white;
+  .btn-arena-secondary {
+    @apply bg-arena-surface border border-arena-border text-arena-text
+           hover:border-arena-blue hover:text-arena-blue;
   }
   
-  .btn-pump-success {
-    @apply bg-gradient-to-r from-pump-green via-pump-cyan to-pump-blue
-           text-white border-0 hover:shadow-[0_0_30px_rgba(0,255,136,0.5)];
+  .input-arena {
+    @apply w-full px-4 py-3 bg-arena-surface border border-arena-border rounded-lg
+           text-arena-text placeholder-arena-textDim focus:outline-none
+           focus:border-arena-blue transition-all duration-200;
   }
   
-  /* Input style */
-  .input-pump {
-    @apply w-full px-4 py-3 bg-pump-surface border-2 border-pump-border rounded-xl
-           text-pump-text placeholder-pump-textDim focus:outline-none
-           focus:border-pump-pink focus:ring-2 focus:ring-pump-pink/20
-           transition-all duration-300 font-medium;
+  .label-arena {
+    @apply text-xs uppercase tracking-wider text-arena-textMuted font-semibold mb-2 block;
   }
   
-  /* Label style */
-  .label-pump {
-    @apply text-xs uppercase tracking-wider text-pump-textMuted font-bold mb-2 block;
-  }
-  
-  /* PnL colors */
   .pnl-positive {
-    @apply text-pump-green font-bold;
+    @apply text-arena-green font-semibold;
   }
   
   .pnl-negative {
-    @apply text-pump-red font-bold;
+    @apply text-arena-red font-semibold;
   }
   
-  /* Status pill */
-  .pill-pump {
-    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold
-           uppercase tracking-wider border-2;
+  .pill-arena {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+           border border-arena-border;
   }
   
-  .pill-pump-success {
-    @apply border-pump-green text-pump-green bg-pump-green/10;
+  .pill-arena-success {
+    @apply border-arena-green text-arena-green bg-arena-green/10;
   }
   
-  .pill-pump-danger {
-    @apply border-pump-red text-pump-red bg-pump-red/10;
-  }
-  
-  .pill-pump-warning {
-    @apply border-pump-yellow text-pump-yellow bg-pump-yellow/10;
-  }
-  
-  .pill-pump-info {
-    @apply border-pump-blue text-pump-blue bg-pump-blue/10;
+  .pill-arena-danger {
+    @apply border-arena-red text-arena-red bg-arena-red/10;
   }
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-pump-bg;
+  @apply bg-arena-bg;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-pump-border rounded-full hover:bg-pump-pink/50;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-/* Selection */
-::selection {
-  @apply bg-pump-pink/30 text-pump-text;
+  @apply bg-arena-border rounded-full hover:bg-arena-textMuted;
 }
