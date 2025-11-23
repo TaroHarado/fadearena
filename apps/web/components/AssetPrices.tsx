@@ -64,7 +64,7 @@ export default function AssetPrices() {
         {prices.map((asset, index) => (
           <div 
             key={asset.ticker} 
-            className="text-center transition-all duration-300 hover:scale-105 hover:bg-terminal-bg/50 p-2 rounded animate-fade-in"
+            className="text-center transition-all duration-300 hover:scale-110 hover:bg-terminal-bg/50 p-3 rounded-lg hover:border-terminal-purple/30 border border-transparent animate-fade-in hover:shadow-lg hover:shadow-terminal-purple/20"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <div className="text-xs text-terminal-textMuted mb-1">{asset.ticker}</div>

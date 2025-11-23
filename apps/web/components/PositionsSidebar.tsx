@@ -30,8 +30,10 @@ export default function PositionsSidebar() {
   const totalPositions = positions.wallets.reduce((sum, w) => sum + w.positions.length, 0);
 
   return (
-    <div className="card p-4 w-80 max-h-[calc(100vh-200px)] overflow-y-auto">
-      <h3 className="text-lg font-bold mb-4 font-mono">Active Positions</h3>
+    <div className="card p-4 w-80 max-h-[calc(100vh-200px)] overflow-y-auto hover:shadow-xl hover:shadow-terminal-blue/20 transition-all duration-500">
+      <h3 className="text-lg font-bold mb-4 font-mono bg-gradient-to-r from-terminal-blue to-terminal-cyan bg-clip-text text-transparent">
+        Active Positions
+      </h3>
       <div className="text-xs text-terminal-textMuted mb-4">
         {totalPositions} {totalPositions === 1 ? 'position' : 'positions'} across {positions.wallets.length} {positions.wallets.length === 1 ? 'wallet' : 'wallets'}
       </div>

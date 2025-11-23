@@ -223,8 +223,10 @@ export default function FaderEquityChart() {
   }
 
   return (
-    <div className="card p-6">
-      <h3 className="text-lg font-bold mb-4 font-mono">Fader Equity</h3>
+    <div className="card p-6 hover:shadow-xl hover:shadow-terminal-purple/20 transition-all duration-500">
+      <h3 className="text-lg font-bold mb-4 font-mono bg-gradient-to-r from-terminal-purple to-terminal-blue bg-clip-text text-transparent">
+        Fader Equity
+      </h3>
       <div style={{ width: '100%', height: '400px' }}>
         <ResponsiveContainer>
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>

@@ -10,7 +10,7 @@ export function TopNav() {
   }
 
   return (
-    <nav className="border-b border-terminal-border bg-terminal-surface/80 backdrop-blur-md">
+    <nav className="border-b border-terminal-border bg-terminal-surface/90 backdrop-blur-xl sticky top-0 z-50 shadow-lg shadow-terminal-purple/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}

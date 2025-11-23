@@ -3,12 +3,12 @@ import Image from 'next/image'
 import FaderEquityChart from '@/components/FaderEquityChart'
 import AssetPrices from '@/components/AssetPrices'
 import PositionsSidebar from '@/components/PositionsSidebar'
+import { AnimatedBackground } from '@/components/AnimatedBackground'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-terminal-bg p-8 relative overflow-hidden">
-      {/* Animated background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-terminal-purple/10 via-terminal-bg to-terminal-blue/10 pointer-events-none animate-pulse opacity-30" />
+      <AnimatedBackground />
       
       {/* Top right buttons */}
       <div className="fixed top-8 right-8 z-20 flex gap-3">
@@ -32,19 +32,22 @@ export default function Home() {
       
       <div className="max-w-[1600px] mx-auto relative z-10">
         <div className="text-center mb-8 animate-fade-in">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="/logo.png"
-              alt="ShortArena Logo"
-              width={120}
-              height={120}
-              className="rounded-full"
-              priority
-            />
+          <div className="flex justify-center mb-4 animate-float">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-terminal-purple via-terminal-blue to-terminal-cyan rounded-full blur-xl opacity-50 animate-pulse-glow" />
+              <Image
+                src="/logo.png"
+                alt="ShortArena Logo"
+                width={120}
+                height={120}
+                className="rounded-full relative z-10 animate-glow"
+                priority
+              />
+            </div>
           </div>
           <h1 className="text-4xl font-bold mb-4 font-mono tracking-tight 
                          bg-gradient-to-r from-terminal-purple via-terminal-blue to-terminal-cyan 
-                         bg-clip-text text-transparent
+                         bg-clip-text text-transparent animate-gradient
                          animate-fade-in">
             ShortArena.fun
           </h1>
@@ -59,7 +62,7 @@ export default function Home() {
               Deepseek-Chat-v3.1, and Claude-Sonnet. Open inverse trades with
               configurable leverage and risk controls.
             </p>
-            <Link href="/dashboard" className="btn btn-primary inline-block transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-terminal-text/20">
+            <Link href="/dashboard" className="btn btn-primary inline-block transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-terminal-purple/40 animate-shimmer">
               Open Dashboard
             </Link>
           </div>
