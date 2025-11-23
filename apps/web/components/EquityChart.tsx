@@ -81,7 +81,7 @@ export function EquityChart() {
             stroke="#8b5cf6"
             strokeWidth={2}
             dot={false}
-            name="ShortArena"
+            name="ReverseArena"
           />
         </LineChart>
       </ResponsiveContainer>

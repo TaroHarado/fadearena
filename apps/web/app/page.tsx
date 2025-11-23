@@ -25,14 +25,14 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity animate-pump-pulse" />
                 <Image
                   src="/logo.png"
-                  alt="ShortArena"
+                  alt="ReverseArena"
                   width={48}
                   height={48}
                   className="rounded-full relative z-10 animate-pump-float"
                   priority
                 />
               </div>
-              <span className="text-2xl font-bold text-gradient-pink">ShortArena</span>
+              <span className="text-2xl font-bold text-gradient-pink">ReverseArena.fun</span>
             </Link>
             
             <div className="flex items-center gap-4">
@@ -77,7 +77,7 @@ export default function Home() {
                 Start Trading
               </Link>
               <a
-                href="https://x.com/shortarena_fun"
+                href="https://x.com/reversearena_fun"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-pump btn-pump-secondary text-lg px-8 py-4"
@@ -130,12 +130,12 @@ export default function Home() {
       <Modal
         isOpen={showInfoModal}
         onClose={() => setShowInfoModal(false)}
-        title="About ShortArena"
+        title="About ReverseArena"
         size="md"
       >
         <div className="space-y-4 text-pump-text">
           <p className="text-lg leading-relaxed">
-            <span className="text-gradient-pink font-bold">ShortArena</span> is a contrarian trading platform 
+            <span className="text-gradient-pink font-bold">ReverseArena.fun</span> is a contrarian trading platform 
             that automatically mirrors top AI trading bots with inverse positions.
           </p>
           <p className="text-pump-textMuted">
@@ -149,7 +149,7 @@ export default function Home() {
           <div className="pt-4 border-t-2 border-pump-border">
             <div className="flex items-center gap-4">
               <a
-                href="https://x.com/shortarena_fun"
+                href="https://x.com/reversearena_fun"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-pump btn-pump-secondary flex-1 text-center"

@@ -19,13 +19,13 @@ export function TopNav() {
               <div className="absolute inset-0 bg-gradient-to-r from-pump-pink via-pump-purple to-pump-blue rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity animate-pump-pulse" />
               <Image
                 src="/logo.png"
-                alt="ShortArena"
+                alt="ReverseArena"
                 width={40}
                 height={40}
                 className="rounded-full relative z-10 animate-pump-float"
               />
             </div>
-            <span className="text-xl font-black text-gradient-pink">ShortArena</span>
+            <span className="text-xl font-black text-gradient-pink">ReverseArena.fun</span>
           </Link>
 
           {/* Nav Links */}
@@ -42,7 +42,7 @@ export function TopNav() {
           <div className="flex items-center gap-3">
             {/* Social buttons */}
             <a
-              href="https://x.com/shortarena_fun"
+              href="https://x.com/reversearena_fun"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-pump btn-pump-secondary text-xs px-4 py-2"
