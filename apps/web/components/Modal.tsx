@@ -33,34 +33,29 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-pump-scale-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       
-      {/* Modal */}
       <div
-        className={`relative ${sizeClasses[size]} w-full bg-pump-surface border-2 border-pump-pink/50 rounded-2xl shadow-[0_0_50px_rgba(255,0,255,0.5)] animate-pump-slide-up`}
+        className={`relative ${sizeClasses[size]} w-full bg-arena-surface border border-arena-border rounded-lg`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         {title && (
-          <div className="flex items-center justify-between p-6 border-b-2 border-pump-border">
-            <h2 className="text-2xl font-bold text-gradient-pink">{title}</h2>
+          <div className="flex items-center justify-between p-6 border-b border-arena-border">
+            <h2 className="text-2xl font-bold text-arena-text">{title}</h2>
             <button
               onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-pump-surface border-2 border-pump-border hover:border-pump-pink hover:bg-pump-pink/10 transition-all duration-300 text-pump-text hover:text-pump-pink"
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-arena-surface border border-arena-border hover:border-arena-blue transition-all text-arena-text hover:text-arena-blue"
             >
               <span className="text-xl">×</span>
             </button>
           </div>
         )}
         
-        {/* Content */}
         <div className="p-6">{children}</div>
       </div>
     </div>
   )
 }
-

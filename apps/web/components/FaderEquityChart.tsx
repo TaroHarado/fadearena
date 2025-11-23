@@ -54,6 +54,8 @@ function generateInitialChartData(): ChartDataPoint[] {
   startDate.setHours(21, 0, 0, 0)
   const startTime = startDate.getTime()
   
+  // Ограничиваем количество точек - максимум 6 часов = 360 точек (каждые 60 секунд)
+  // Но для производительности делаем каждые 5 минут = 72 точки
   const initialData: ChartDataPoint[] = []
   const variation = 0.0001
   const currentValues: Record<string, number> = { ...BASE_VALUES }
@@ -64,7 +66,8 @@ function generateInitialChartData(): ChartDataPoint[] {
     return seed / 233280
   }
   
-  for (let t = startTime; t <= now; t += 60 * 1000) {
+  // Генерируем точки каждые 5 минут для производительности
+  for (let t = startTime; t <= now; t += 5 * 60 * 1000) {
     const point: ChartDataPoint = {
       time: t,
       timeFormatted: new Date(t).toLocaleTimeString('en-US', {

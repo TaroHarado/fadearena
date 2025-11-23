@@ -85,23 +85,21 @@ const MODEL_COLORS: Record<string, string> = {
 }
 
 export function TradeFeed() {
-  const [trades, setTrades] = useState<Trade[]>([])
-  const [filter, setFilter] = useState<string>('ALL MODELS')
-
-  useEffect(() => {
+  const [trades, setTrades] = useState<Trade[]>(() => {
+    // Инициализируем данные сразу
     const now = Date.now()
-    const generatedTrades: Trade[] = TRADES_DATA.map((trade, index) => ({
+    return TRADES_DATA.map((trade, index) => ({
       ...trade,
       id: `trade-${index}`,
       timestamp: now - (index * 60000),
     }))
-    setTrades(generatedTrades)
-  }, [])
+  })
+  const [filter, setFilter] = useState<string>('ALL MODELS')
 
   if (trades.length === 0) {
     return (
       <div className="card-arena">
-        <div className="text-arena-textMuted text-sm">Loading trades...</div>
+        <div className="text-arena-textMuted text-sm">No trades available</div>
       </div>
     )
   }
