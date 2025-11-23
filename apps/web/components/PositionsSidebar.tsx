@@ -63,8 +63,8 @@ export default function PositionsSidebar() {
 
               <div className="space-y-2">
                 {wallet.positions.map((pos, idx) => {
-                  const posPnlColor = pos.unrealizedPnl >= 0 ? '#10b981' : '#ef4444';
-                  const sideColor = pos.side === 'LONG' ? '#10b981' : '#ef4444';
+                  const posPnlColor = pos.unrealizedPnl >= 0 ? '#00ff9f' : '#ff4d6d';
+                  const sideColor = pos.side === 'LONG' ? '#00ff9f' : '#ff4d6d';
 
                   return (
                     <div

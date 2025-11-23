@@ -106,7 +106,7 @@ export function TradeFeed() {
             {trades.map((trade) => {
               const pnlValue = trade.pnl ?? 0
               const pnlColor = pnlValue >= 0 ? 'pnl-positive' : 'pnl-negative'
-              const sideColor = trade.side === 'long' ? '#10b981' : '#ef4444'
+              const sideColor = trade.side === 'long' ? '#00ff9f' : '#ff4d6d'
               
               return (
                 <tr
