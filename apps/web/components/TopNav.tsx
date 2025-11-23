@@ -39,7 +39,7 @@ export function TopNav() {
           <div className="flex items-center gap-3">
             {/* Social buttons */}
             <a
-              href="https://x.com/fadearena_com"
+              href="https://x.com/fadearena_sol"
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-1.5 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-xs font-medium text-terminal-text"

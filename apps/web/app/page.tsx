@@ -13,7 +13,7 @@ export default function Home() {
       {/* Top right buttons */}
       <div className="fixed top-8 right-8 z-20 flex gap-3">
         <a
-          href="https://x.com/fadearena_com"
+          href="https://x.com/fadearena_sol"
           target="_blank"
           rel="noopener noreferrer"
           className="px-4 py-2 bg-terminal-surface border border-terminal-border rounded hover:bg-terminal-bg transition-colors text-sm font-medium text-terminal-text"
