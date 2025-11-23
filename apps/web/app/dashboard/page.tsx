@@ -10,28 +10,42 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('live')
 
   return (
-    <div className="min-h-screen bg-arena-bg p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex gap-4 border-b border-arena-border">
+    <div style={{ minHeight: '100vh', backgroundColor: '#0a0a0a', padding: '1.5rem' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #2a2a2a', marginBottom: '1.5rem' }}>
           <button
             onClick={() => setActiveTab('live')}
-            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
-              activeTab === 'live'
-                ? 'text-arena-text border-b-2 border-arena-blue'
-                : 'text-arena-textMuted hover:text-arena-text'
-            }`}
-            style={activeTab === 'live' ? { color: '#ffffff', borderBottomColor: '#00d4ff' } : { color: '#888888' }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: activeTab === 'live' ? '#ffffff' : '#888888',
+              borderBottom: activeTab === 'live' ? '2px solid #00d4ff' : 'none',
+              background: 'none',
+              border: 'none',
+              borderTop: 'none',
+              borderLeft: 'none',
+              borderRight: 'none',
+              cursor: 'pointer',
+            }}
           >
             Live Trades
           </button>
           <button
             onClick={() => setActiveTab('models')}
-            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
-              activeTab === 'models'
-                ? 'text-arena-text border-b-2 border-arena-blue'
-                : 'text-arena-textMuted hover:text-arena-text'
-            }`}
-            style={activeTab === 'models' ? { color: '#ffffff', borderBottomColor: '#00d4ff' } : { color: '#888888' }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: activeTab === 'models' ? '#ffffff' : '#888888',
+              borderBottom: activeTab === 'models' ? '2px solid #00d4ff' : 'none',
+              background: 'none',
+              border: 'none',
+              borderTop: 'none',
+              borderLeft: 'none',
+              borderRight: 'none',
+              cursor: 'pointer',
+            }}
           >
             Models
           </button>

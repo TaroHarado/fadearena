@@ -93,30 +93,30 @@ function generateInitialChartData(): ChartDataPoint[] {
 }
 
 export default function FaderEquityChart() {
-  // Генерируем данные сразу при инициализации
-  const [chartData, setChartData] = useState<ChartDataPoint[]>(() => {
-    if (typeof window !== 'undefined') {
-      return generateInitialChartData()
-    }
-    return []
-  })
-  const [currentValues, setCurrentValues] = useState<Record<string, number>>(() => {
-    if (chartData.length > 0) {
-      const lastPoint = chartData[chartData.length - 1]
-      return {
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([])
+  const [currentValues, setCurrentValues] = useState<Record<string, number>>({ ...BASE_VALUES })
+  const [isMounted, setIsMounted] = useState(false)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    setIsMounted(true)
+    
+    // Генерируем данные только на клиенте
+    const initialData = generateInitialChartData()
+    setChartData(initialData)
+    
+    if (initialData.length > 0) {
+      const lastPoint = initialData[initialData.length - 1]
+      setCurrentValues({
         GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
         GROK: lastPoint.GROK || BASE_VALUES.GROK,
         QWEN: lastPoint.QWEN || BASE_VALUES.QWEN,
         KIMI: lastPoint.KIMI || BASE_VALUES.KIMI,
         DEEPSEEK: lastPoint.DEEPSEEK || BASE_VALUES.DEEPSEEK,
         CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
-      }
+      })
     }
-    return { ...BASE_VALUES }
-  })
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  useEffect(() => {
     // Обновляем каждые 10 секунд
     intervalRef.current = setInterval(() => {
       setCurrentValues((prev) => {
@@ -186,7 +186,7 @@ export default function FaderEquityChart() {
 
   const yDomain = calculateYDomain()
 
-  if (chartData.length === 0) {
+  if (!isMounted || chartData.length === 0) {
     return (
       <div className="card-arena">
         <h3 className="text-lg font-bold mb-4" style={{ color: '#ffffff' }}>Model Performance</h3>
