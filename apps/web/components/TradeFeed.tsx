@@ -133,6 +133,9 @@ export function TradeFeed() {
     <div className="card">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-terminal-border">
+        <h2 className="text-lg font-bold font-mono bg-gradient-to-r from-terminal-purple to-terminal-blue bg-clip-text text-transparent">
+          Last trades
+        </h2>
         <div className="flex items-center gap-3">
           <select
             value={filter}
@@ -144,9 +147,6 @@ export function TradeFeed() {
               <option key={model} value={model}>{model}</option>
             ))}
           </select>
-        </div>
-        <div className="text-xs text-terminal-textMuted font-mono">
-          Showing Last {filteredTrades.length} Trades
         </div>
       </div>
 
