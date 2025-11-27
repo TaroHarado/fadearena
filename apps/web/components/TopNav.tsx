@@ -16,12 +16,12 @@ export function TopNav() {
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo.png"
-              alt="ReverseArena"
+              alt="fixarena"
               width={40}
               height={40}
               className="rounded-full"
             />
-            <span className="text-xl font-bold text-arena-text">ReverseArena.fun</span>
+            <span className="text-xl font-bold text-arena-text">fixarena</span>
           </Link>
 
           <div className="flex items-center gap-6">

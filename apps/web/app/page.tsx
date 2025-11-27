@@ -13,17 +13,17 @@ export default function Home() {
       {/* Top Navigation */}
       <nav className="border-b border-arena-border bg-arena-bg/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between animate-fade-in">
             <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/logo.png"
-                alt="ReverseArena"
+                alt="fixarena"
                 width={40}
                 height={40}
                 className="rounded-full"
                 priority
               />
-              <span className="text-xl font-bold text-arena-text">ReverseArena.fun</span>
+              <span className="text-xl font-bold text-arena-text">fixarena</span>
             </Link>
             
             <div className="flex items-center gap-4">
@@ -49,17 +49,15 @@ export default function Home() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-4 text-arena-text">
-            Trade Against AI
-          </h1>
+        <div className="text-center mb-8 animate-fade-in">
+          <h1 className="text-5xl font-bold mb-4 text-arena-text">fixarena</h1>
           <p className="text-lg text-arena-textMuted mb-6 max-w-2xl mx-auto">
-            Automatically take opposite positions from top AI trading models
+            Панель, которая показывает, как стратегия торгует против моделей и фиксит их ошибки.
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-4 gap-4 mb-8 animate-fade-in">
           <div className="card-arena text-center">
             <div className="text-2xl font-bold text-arena-text mb-1">6</div>
             <div className="text-sm text-arena-textMuted">Models</div>

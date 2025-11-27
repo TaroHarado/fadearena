@@ -8,8 +8,9 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {
-  title: 'ReverseArena.fun - Trade Against AI',
-  description: 'Flip the script on AI trading bots. Automatically take opposite positions from top-performing models and profit from their moves.',
+  title: 'fixarena - Trade Against AI',
+  description:
+    'fixarena — фронтенд-панель, которая показывает, как стратегия торгует против топовых AI моделей и фиксит их ошибки.',
   icons: {
     icon: '/logo.png',
   },
