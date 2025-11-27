@@ -22,13 +22,24 @@ const FADER_COLORS = [
   '#00ffff', // CLAUDE - cyan
 ]
 
-const BASE_VALUES: Record<string, number> = {
-  GROK: 502.26,
-  DEEPSEEK: 502.53,
-  GEMINI: 494.46,
-  QWEN: 496.17,
-  KIMI: 496.13,
-  CLAUDE: 492.79,
+// Target wallet balances as of the current experiment state
+const FINAL_VALUES: Record<string, number> = {
+  GROK: 450,
+  KIMI: 705,
+  DEEPSEEK: 691,
+  GEMINI: 599,
+  QWEN: 597,
+  CLAUDE: 565,
+}
+
+// Approximate starting balances at the beginning of the experiment
+const START_VALUES: Record<string, number> = {
+  GROK: 500,
+  KIMI: 500,
+  DEEPSEEK: 500,
+  GEMINI: 500,
+  QWEN: 500,
+  CLAUDE: 500,
 }
 
 type ChartDataPoint = {
@@ -44,31 +55,67 @@ type ChartDataPoint = {
 
 function generateInitialChartData(): ChartDataPoint[] {
   const now = Date.now()
-  const today = new Date()
-  const currentHour = today.getHours()
-  
-  let startDate = new Date(today)
-  if (currentHour < 21) {
-    startDate.setDate(startDate.getDate() - 1)
+
+  // Experiment started on 23 November at 18:00 local time
+  const experimentStart = new Date()
+  experimentStart.setMonth(10) // November (0-based)
+  experimentStart.setDate(23)
+  experimentStart.setHours(18, 0, 0, 0)
+  const startTime = experimentStart.getTime()
+
+  // If for some reason "now" is before the experiment start, just show a flat line
+  if (now <= startTime) {
+    const singlePointTime = startTime
+    return [
+      {
+        time: singlePointTime,
+        timeFormatted: new Date(singlePointTime).toLocaleTimeString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        GEMINI: START_VALUES.GEMINI,
+        GROK: START_VALUES.GROK,
+        QWEN: START_VALUES.QWEN,
+        KIMI: START_VALUES.KIMI,
+        DEEPSEEK: START_VALUES.DEEPSEEK,
+        CLAUDE: START_VALUES.CLAUDE,
+      },
+    ]
   }
-  startDate.setHours(21, 0, 0, 0)
-  const startTime = startDate.getTime()
-  
+
+  const stepMinutes = 30 // one point every 30 minutes for the whole experiment
+  const stepMs = stepMinutes * 60 * 1000
+
+  const totalSteps = Math.floor((now - startTime) / stepMs)
   const initialData: ChartDataPoint[] = []
-  const variation = 0.0001
-  const values: Record<string, number> = { ...BASE_VALUES }
-  
+
   let seed = Math.floor(startTime / 1000)
   const seededRandom = () => {
     seed = (seed * 9301 + 49297) % 233280
     return seed / 233280
   }
-  
-  // Генерируем точки каждые 5 минут
-  for (let t = startTime; t <= now; t += 5 * 60 * 1000) {
+
+  // We will build values step-by-step to get plateaus at night and impulsive moves at "market hours"
+  const runningValues: Record<string, number> = { ...START_VALUES }
+
+  for (let step = 0; step <= totalSteps; step++) {
+    const t = startTime + step * stepMs
+    const date = new Date(t)
+    const hour = date.getHours()
+
+    const isNight = hour < 8 || hour >= 22
+    const isImpulseHour = (hour >= 9 && hour < 11) || (hour >= 15 && hour < 17)
+
+    // Base factor: at night almost flat, during day normal moves, at impulse hours stronger trend
+    const dayFactor = isNight ? 0.15 : isImpulseHour ? 1.6 : 0.9
+
     const point: ChartDataPoint = {
       time: t,
-      timeFormatted: new Date(t).toLocaleTimeString('en-US', {
+      timeFormatted: date.toLocaleTimeString('en-US', {
+        month: 'short',
+        day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
       }),
@@ -79,22 +126,50 @@ function generateInitialChartData(): ChartDataPoint[] {
       DEEPSEEK: null,
       CLAUDE: null,
     }
-    
+
     for (const label of FADER_LABELS) {
-      const change = (seededRandom() - 0.5) * 2 * variation
-      values[label] = values[label] * (1 + change)
-      ;(point as any)[label] = values[label]
+      const start = START_VALUES[label]
+      const target = FINAL_VALUES[label]
+
+      if (step === totalSteps) {
+        // Force exact final balances at the last point
+        runningValues[label] = target
+        ;(point as any)[label] = target
+      } else {
+        const remainingSteps = Math.max(totalSteps - step, 1)
+        const remainingDelta = target - runningValues[label]
+
+        // Base step to naturally converge to target
+        const baseStep = remainingDelta / remainingSteps
+
+        // Apply "market activity" factor
+        let trendStep = baseStep * dayFactor
+
+        // Never let a single step overshoot the remaining distance by too much
+        const maxStep = Math.abs(remainingDelta) * 0.25
+        if (Math.abs(trendStep) > maxStep) {
+          trendStep = maxStep * Math.sign(trendStep)
+        }
+
+        // Noise: tiny at night, stronger on market / impulse hours
+        const noiseBase = Math.abs(target - start)
+        const noiseAmplitude = noiseBase * (isNight ? 0.002 : isImpulseHour ? 0.02 : 0.008)
+        const noise = (seededRandom() - 0.5) * 2 * noiseAmplitude
+
+        runningValues[label] = runningValues[label] + trendStep + noise
+        ;(point as any)[label] = runningValues[label]
+      }
     }
-    
+
     initialData.push(point)
   }
-  
+
   return initialData
 }
 
 export default function FaderEquityChart() {
   const [chartData, setChartData] = useState<ChartDataPoint[]>([])
-  const [currentValues, setCurrentValues] = useState<Record<string, number>>({ ...BASE_VALUES })
+  const [currentValues, setCurrentValues] = useState<Record<string, number>>({ ...FINAL_VALUES })
   const [isMounted, setIsMounted] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -104,16 +179,16 @@ export default function FaderEquityChart() {
     // Генерируем данные только на клиенте
     const initialData = generateInitialChartData()
     setChartData(initialData)
-    
+
     if (initialData.length > 0) {
       const lastPoint = initialData[initialData.length - 1]
       setCurrentValues({
-        GEMINI: lastPoint.GEMINI || BASE_VALUES.GEMINI,
-        GROK: lastPoint.GROK || BASE_VALUES.GROK,
-        QWEN: lastPoint.QWEN || BASE_VALUES.QWEN,
-        KIMI: lastPoint.KIMI || BASE_VALUES.KIMI,
-        DEEPSEEK: lastPoint.DEEPSEEK || BASE_VALUES.DEEPSEEK,
-        CLAUDE: lastPoint.CLAUDE || BASE_VALUES.CLAUDE,
+        GEMINI: lastPoint.GEMINI || FINAL_VALUES.GEMINI,
+        GROK: lastPoint.GROK || FINAL_VALUES.GROK,
+        QWEN: lastPoint.QWEN || FINAL_VALUES.QWEN,
+        KIMI: lastPoint.KIMI || FINAL_VALUES.KIMI,
+        DEEPSEEK: lastPoint.DEEPSEEK || FINAL_VALUES.DEEPSEEK,
+        CLAUDE: lastPoint.CLAUDE || FINAL_VALUES.CLAUDE,
       })
     }
 
@@ -124,7 +199,7 @@ export default function FaderEquityChart() {
         const variation = 0.0001
         
         for (const label of FADER_LABELS) {
-          const current = prev[label] || BASE_VALUES[label]
+          const current = prev[label] || FINAL_VALUES[label]
           const change = (Math.random() - 0.5) * 2 * variation
           newValues[label] = current * (1 + change)
         }

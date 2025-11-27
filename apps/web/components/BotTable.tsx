@@ -26,6 +26,17 @@ function ExternalLinkIcon({ size = 14 }: { size?: number }) {
   )
 }
 
+const START_BALANCE = 500
+
+const CURRENT_BALANCES: Record<string, number> = {
+  'gemini-3-pro': 599,
+  'grok-4': 450,
+  'qwen3-max': 597,
+  'kimi-k2-thinking': 705,
+  'deepseek-chat-v3.1': 691,
+  'claude-sonnet': 565,
+}
+
 const STATIC_BOTS = [
   {
     id: 'gemini-3-pro',
@@ -33,7 +44,7 @@ const STATIC_BOTS = [
     walletAddress: getWalletAddress('GEMINI'),
     faderWalletAddress: getWalletAddress('GEMINI'),
     stats: {
-      totalPnL: 0,
+      totalPnL: CURRENT_BALANCES['gemini-3-pro'] - START_BALANCE,
       dailyPnL: 0,
       totalTrades: 0,
       winRate: 0.0,
@@ -48,7 +59,7 @@ const STATIC_BOTS = [
     walletAddress: getWalletAddress('GROK'),
     faderWalletAddress: getWalletAddress('GROK'),
     stats: {
-      totalPnL: 0,
+      totalPnL: CURRENT_BALANCES['grok-4'] - START_BALANCE,
       dailyPnL: 0,
       totalTrades: 0,
       winRate: 0.0,
@@ -63,7 +74,7 @@ const STATIC_BOTS = [
     walletAddress: getWalletAddress('QWEN'),
     faderWalletAddress: getWalletAddress('QWEN'),
     stats: {
-      totalPnL: 0,
+      totalPnL: CURRENT_BALANCES['qwen3-max'] - START_BALANCE,
       dailyPnL: 0,
       totalTrades: 0,
       winRate: 0.0,
@@ -78,7 +89,7 @@ const STATIC_BOTS = [
     walletAddress: getWalletAddress('KIMI'),
     faderWalletAddress: getWalletAddress('KIMI'),
     stats: {
-      totalPnL: 0,
+      totalPnL: CURRENT_BALANCES['kimi-k2-thinking'] - START_BALANCE,
       dailyPnL: 0,
       totalTrades: 0,
       winRate: 0.0,
@@ -93,7 +104,7 @@ const STATIC_BOTS = [
     walletAddress: getWalletAddress('DEEPSEEK'),
     faderWalletAddress: getWalletAddress('DEEPSEEK'),
     stats: {
-      totalPnL: 0,
+      totalPnL: CURRENT_BALANCES['deepseek-chat-v3.1'] - START_BALANCE,
       dailyPnL: 0,
       totalTrades: 0,
       winRate: 0.0,
@@ -108,7 +119,7 @@ const STATIC_BOTS = [
     walletAddress: getWalletAddress('CLAUDE'),
     faderWalletAddress: getWalletAddress('CLAUDE'),
     stats: {
-      totalPnL: 0,
+      totalPnL: CURRENT_BALANCES['claude-sonnet'] - START_BALANCE,
       dailyPnL: 0,
       totalTrades: 0,
       winRate: 0.0,
@@ -136,36 +147,36 @@ export function BotTable() {
 
   return (
     <div className="card-arena">
-      <h2 className="text-xl font-bold mb-4" style={{ color: '#ffffff' }}>Bot Wallet Positions</h2>
+      <h2 className="text-xl font-bold mb-4">Bot Wallet Positions</h2>
       <div className="overflow-x-auto">
         <table className="w-full" style={{ borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid #2a2a2a' }}>
-              <th className="text-left py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+            <tr style={{ borderBottom: '1px solid #111111' }}>
+              <th className="text-left py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Bot
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Wallet
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Positions
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Unrealized PnL
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Total PnL
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Daily PnL
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Win Rate
               </th>
-              <th className="text-right py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-right py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Metric
               </th>
-              <th className="text-center py-3 px-4 text-xs font-semibold uppercase" style={{ color: '#888888' }}>
+              <th className="text-center py-3 px-4 text-xs font-semibold uppercase text-neutral-600">
                 Status
               </th>
             </tr>
@@ -179,18 +190,17 @@ export function BotTable() {
               return (
                 <tr
                   key={bot.id}
-                  style={{ borderBottom: '1px solid #2a2a2a' }}
-                  className="hover:bg-arena-surface/50 transition-colors"
+                  style={{ borderBottom: '1px solid #111111' }}
+                  className="hover:bg-[#f5f4ef] transition-colors"
                 >
-                  <td className="py-3 px-4 font-semibold" style={{ color: '#ffffff' }}>{bot.name}</td>
+                  <td className="py-3 px-4 font-semibold">{bot.name}</td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <a
                         href={`https://app.hyperliquid.xyz/explorer/address/${walletAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-mono text-xs hover:text-arena-blue transition-colors"
-                        style={{ color: '#888888' }}
+                        className="font-mono text-xs text-neutral-600 hover:underline"
                         title="View on Hyperliquid"
                       >
                         {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
@@ -199,15 +209,14 @@ export function BotTable() {
                         href={`https://app.hyperliquid.xyz/explorer/address/${walletAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:text-arena-blue transition-colors"
-                        style={{ color: '#888888' }}
+                        className="text-neutral-600 hover:text-black transition-colors"
                         title="View on Hyperliquid"
                       >
                         <ExternalLinkIcon size={14} />
                       </a>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-right font-semibold" style={{ color: '#ffffff' }}>
+                  <td className="py-3 px-4 text-right font-semibold">
                     {bot.currentOpenPositions ?? 0}
                   </td>
                   <td className={`py-3 px-4 text-right font-semibold ${
@@ -231,10 +240,10 @@ export function BotTable() {
                   }`}>
                     ${bot.stats.dailyPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="py-3 px-4 text-right font-semibold" style={{ color: '#ffffff' }}>
+                  <td className="py-3 px-4 text-right font-semibold">
                     {(bot.stats.winRate * 100).toFixed(1)}%
                   </td>
-                  <td className="py-3 px-4 text-right font-semibold" style={{ color: '#ffffff' }}>
+                  <td className="py-3 px-4 text-right font-semibold">
                     {metric.toFixed(2)}
                   </td>
                   <td className="py-3 px-4 text-center">

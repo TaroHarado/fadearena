@@ -21,8 +21,8 @@ export default function PositionsSidebar() {
   if (!positions || positions.wallets.length === 0) {
     return (
       <div className="card-arena">
-        <h3 className="text-lg font-bold mb-4 text-arena-text">Open Positions</h3>
-        <div className="text-arena-textMuted text-sm">No positions found</div>
+        <h3 className="text-lg font-bold mb-4">Open Positions</h3>
+        <div className="text-sm text-neutral-600">No positions found</div>
       </div>
     )
   }
@@ -31,8 +31,8 @@ export default function PositionsSidebar() {
 
   return (
     <div className="card-arena max-h-[600px] overflow-y-auto">
-      <h3 className="text-lg font-bold mb-4 text-arena-text">Open Positions</h3>
-      <div className="text-xs text-arena-textMuted mb-4">
+      <h3 className="text-lg font-bold mb-2">Open Positions</h3>
+      <div className="text-xs text-neutral-600 mb-4">
         {totalPositions} positions • {positions.wallets.length} wallets
       </div>
 
@@ -48,7 +48,7 @@ export default function PositionsSidebar() {
           return (
             <div
               key={wallet.label}
-              className="border border-arena-border rounded-lg p-4 bg-arena-bg"
+              className="border border-black rounded-md p-4 bg-white"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export default function PositionsSidebar() {
                   return (
                     <div
                       key={`${pos.asset}-${idx}`}
-                      className="bg-arena-surface border border-arena-border rounded p-2 text-xs"
+                      className="bg-[#f5f4ef] border border-black rounded-sm p-2 text-xs"
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold">{pos.asset}</span>
@@ -87,18 +87,28 @@ export default function PositionsSidebar() {
                           {pos.side}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-1 text-xs text-arena-textMuted">
-                        <div>Size: <span className="text-arena-text font-mono">{pos.size.toFixed(4)}</span></div>
-                        <div>Lev: <span className="text-arena-text font-mono">{pos.leverage}x</span></div>
+                      <div className="grid grid-cols-2 gap-1 text-xs text-neutral-700">
+                        <div>
+                          Size:{' '}
+                          <span className="font-mono">
+                            {pos.size.toFixed(4)}
+                          </span>
+                        </div>
+                        <div>
+                          Lev:{' '}
+                          <span className="font-mono">
+                            {pos.leverage}x
+                          </span>
+                        </div>
                       </div>
-                      <div className="mt-1 pt-1 border-t border-arena-border flex justify-between">
-                        <span className="text-arena-textMuted">Notional:</span>
+                      <div className="mt-1 pt-1 border-t border-black flex justify-between">
+                        <span className="text-neutral-700">Notional:</span>
                         <span className="font-mono">
                           ${pos.notional.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-arena-textMuted">PnL:</span>
+                        <span className="text-neutral-700">PnL:</span>
                         <span className={`font-bold ${posPnlColor}`}>
                           {pos.unrealizedPnl >= 0 ? '+' : ''}
                           ${pos.unrealizedPnl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -110,8 +120,10 @@ export default function PositionsSidebar() {
               </div>
 
               {wallet.positions.length > 0 && (
-                <div className="pt-2 border-t border-arena-border flex justify-between">
-                  <span className="text-sm text-arena-textMuted font-semibold">Total PnL:</span>
+                <div className="pt-2 border-t border-black flex justify-between">
+                  <span className="text-sm text-neutral-700 font-semibold">
+                    Total PnL:
+                  </span>
                   <span className={`font-bold text-lg ${pnlColor}`}>
                     {wallet.totalUnrealizedPnl >= 0 ? '+' : ''}
                     ${wallet.totalUnrealizedPnl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

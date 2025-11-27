@@ -12,7 +12,13 @@ export const metadata: Metadata = {
   description:
     'fixarena — фронтенд-панель, которая показывает, как стратегия торгует против топовых AI моделей и фиксит их ошибки.',
   icons: {
-    icon: '/logo.png',
+    icon: [
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    shortcut: '/logo.png',
   },
 }
 

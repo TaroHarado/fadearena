@@ -10,35 +10,41 @@ export function TopNav() {
   }
 
   return (
-    <nav className="border-b border-arena-border bg-arena-bg/95 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+    <nav className="border-b border-black bg-[#f5f4ef]/95 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo.png"
               alt="fixarena"
               width={40}
               height={40}
-              className="rounded-full"
             />
-            <span className="text-xl font-bold text-arena-text">fixarena</span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-base font-bold tracking-[0.18em]">
+                FIXARENA
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.24em]">
+                live model watcher
+              </span>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8 text-[11px] uppercase tracking-[0.22em]">
             <Link
               href="/dashboard"
-              className="text-sm font-semibold text-arena-textMuted hover:text-arena-text transition-colors"
+              className="hover:underline"
             >
               Dashboard
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-[11px]">
             <a
-              href="https://x.com/reverse_arena"
+              href="https://x.com/fixarena_fun"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-arena btn-arena-secondary text-sm"
+              className="btn-arena btn-arena-secondary"
             >
               X
             </a>
@@ -46,7 +52,7 @@ export function TopNav() {
               href="https://pump.fun"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-arena btn-arena-primary text-sm"
+              className="btn-arena btn-arena-primary"
             >
               Pump.fun
             </a>
@@ -65,7 +71,7 @@ export function TopNav() {
                 )}
               </>
             )}
-            <span className="text-xs text-arena-textMuted font-mono">
+            <span className="text-[10px] text-neutral-600">
               {new Date().toLocaleTimeString()}
             </span>
           </div>

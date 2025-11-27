@@ -4,9 +4,9 @@
 
 @layer base {
   body {
-    background-color: #0a0a0a;
-    color: #ffffff;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f5f4ef;
+    color: #111111;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 16px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -36,116 +36,119 @@
 
 @layer components {
   .card-arena {
-    background-color: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 0.5rem;
+    background-color: #ffffff;
+    border: 1px solid #111111;
+    border-radius: 0.25rem;
     padding: 1.5rem;
-    transition: all 0.2s;
+    transition: box-shadow 0.15s ease-out, transform 0.15s ease-out;
   }
   
   .card-arena:hover {
-    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 0 1px #111111;
+    transform: translateY(-1px);
   }
   
   .btn-arena {
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    transition: all 0.2s;
+    padding: 0.6rem 1.4rem;
+    border-radius: 0.125rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, transform 0.05s ease-out;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid #111111;
   }
   
   .btn-arena:hover {
-    transform: scale(1.05);
+    transform: translateY(-1px);
   }
   
   .btn-arena:active {
-    transform: scale(0.95);
+    transform: translateY(0);
   }
   
   .btn-arena-primary {
-    background-color: #00d4ff;
-    color: #ffffff;
+    background-color: #111111;
+    color: #f5f4ef;
   }
   
   .btn-arena-primary:hover {
-    background-color: rgba(0, 212, 255, 0.9);
+    background-color: #000000;
   }
   
   .btn-arena-secondary {
-    background-color: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    color: #ffffff;
+    background-color: #ffffff;
+    border: 1px solid #111111;
+    color: #111111;
   }
   
   .btn-arena-secondary:hover {
-    border-color: #00d4ff;
-    color: #00d4ff;
+    background-color: #111111;
+    color: #f5f4ef;
   }
   
   .input-arena {
     width: 100%;
     padding: 0.75rem 1rem;
-    background-color: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 0.5rem;
-    color: #ffffff;
-    transition: all 0.2s;
+    background-color: #ffffff;
+    border: 1px solid #111111;
+    border-radius: 0.125rem;
+    color: #111111;
+    transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
   }
   
   .input-arena::placeholder {
-    color: #555555;
+    color: #9b9b9b;
   }
   
   .input-arena:focus {
     outline: none;
-    border-color: #00d4ff;
+    border-color: #111111;
+    box-shadow: 0 0 0 1px #111111;
   }
   
   .label-arena {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #888888;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.08em;
+    color: #444444;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
     display: block;
   }
   
   .pnl-positive {
-    color: #00ff88;
+    color: #007a3d;
     font-weight: 600;
   }
   
   .pnl-negative {
-    color: #ff3366;
+    color: #b00020;
     font-weight: 600;
   }
   
   .pill-arena {
     display: inline-flex;
     align-items: center;
-    padding: 0.25rem 0.75rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 9999px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    border: 1px solid #2a2a2a;
+    border: 1px solid #111111;
   }
   
   .pill-arena-success {
-    border-color: #00ff88;
-    color: #00ff88;
-    background-color: rgba(0, 255, 136, 0.1);
+    border-color: #007a3d;
+    color: #007a3d;
+    background-color: rgba(0, 122, 61, 0.06);
   }
   
   .pill-arena-danger {
-    border-color: #ff3366;
-    color: #ff3366;
-    background-color: rgba(255, 51, 102, 0.1);
+    border-color: #b00020;
+    color: #b00020;
+    background-color: rgba(176, 0, 32, 0.06);
   }
 }
 

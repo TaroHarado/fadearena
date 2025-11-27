@@ -64,16 +64,6 @@ const TRADES_DATA: Omit<Trade, 'id' | 'timestamp'>[] = [
   { model: 'gemini-3-pro', side: 'SHORT', asset: 'NDX', qty: 0.0060, pnl: -0.24 },
 ]
 
-const MODEL_ICONS: Record<string, string> = {
-  'gpt-5.1': '🧠',
-  'qwen3-max': '🚀',
-  'gemini-3-pro': '💎',
-  'deepseek-chat-v3.1': '🔷',
-  'kimi-k2-thinking': '💫',
-  'claude-sonnet-4-5': '🌟',
-  'mystery-model': '❓',
-}
-
 const MODEL_COLORS: Record<string, string> = {
   'gpt-5.1': '#ff00ff',
   'qwen3-max': '#8b5cf6',
@@ -99,7 +89,7 @@ export function TradeFeed() {
   if (trades.length === 0) {
     return (
       <div className="card-arena">
-        <div className="text-arena-textMuted text-sm">No trades available</div>
+        <div className="text-sm text-neutral-600">No trades available</div>
       </div>
     )
   }
@@ -112,8 +102,8 @@ export function TradeFeed() {
 
   return (
     <div className="card-arena">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-arena-border">
-        <h2 className="text-xl font-bold text-arena-text">Recent Trades</h2>
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-black">
+        <h2 className="text-xl font-bold">Recent Trades</h2>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
@@ -136,15 +126,14 @@ export function TradeFeed() {
           return (
             <div
               key={trade.id}
-              className="border border-arena-border rounded-lg p-4 bg-arena-bg hover:border-arena-blue transition-colors"
+              className="border border-black rounded-md p-4 bg-white hover:bg-[#f5f4ef] transition-colors"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="text-xl">{MODEL_ICONS[trade.model] || '🤖'}</span>
                   <span className="font-bold text-sm" style={{ color: modelColor }}>
                     {trade.model}
                   </span>
-                  <span className="text-arena-textMuted">→</span>
+                  <span className="text-neutral-500">→</span>
                   <span
                     className="text-xs px-2 py-1 rounded font-bold"
                     style={{
@@ -156,7 +145,7 @@ export function TradeFeed() {
                   </span>
                   <span className="font-bold text-sm">{trade.asset}!</span>
                 </div>
-                <div className="text-xs text-arena-textMuted font-mono">
+                <div className="text-xs text-neutral-600 font-mono">
                   {new Date(trade.timestamp).toLocaleDateString('en-US', {
                     month: '2-digit',
                     day: '2-digit',
@@ -170,23 +159,23 @@ export function TradeFeed() {
 
               <div className="grid grid-cols-5 gap-4 text-xs">
                 <div>
-                  <div className="text-arena-textMuted mb-1 text-[10px]">Price</div>
-                  <div className="text-arena-text font-mono">-</div>
+                  <div className="text-neutral-600 mb-1 text-[10px]">Price</div>
+                  <div className="font-mono">-</div>
                 </div>
                 <div>
-                  <div className="text-arena-textMuted mb-1 text-[10px]">Quantity</div>
-                  <div className="text-arena-text font-mono">{trade.qty.toFixed(4)}</div>
+                  <div className="text-neutral-600 mb-1 text-[10px]">Quantity</div>
+                  <div className="font-mono">{trade.qty.toFixed(4)}</div>
                 </div>
                 <div>
-                  <div className="text-arena-textMuted mb-1 text-[10px]">Notional</div>
-                  <div className="text-arena-text font-mono">-</div>
+                  <div className="text-neutral-600 mb-1 text-[10px]">Notional</div>
+                  <div className="font-mono">-</div>
                 </div>
                 <div>
-                  <div className="text-arena-textMuted mb-1 text-[10px]">Holding time</div>
-                  <div className="text-arena-text font-mono">-</div>
+                  <div className="text-neutral-600 mb-1 text-[10px]">Holding time</div>
+                  <div className="font-mono">-</div>
                 </div>
                 <div>
-                  <div className="text-arena-textMuted mb-1 text-[10px]">NET P&L</div>
+                  <div className="text-neutral-600 mb-1 text-[10px]">NET P&L</div>
                   <div className={`font-bold ${pnlColor}`}>
                     {isPositive ? '+' : ''}${trade.pnl.toFixed(2)}
                   </div>
